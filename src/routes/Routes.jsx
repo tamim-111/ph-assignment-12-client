@@ -16,6 +16,8 @@ import AskForAdvertisement from '../pages/Dashboard/Seller/AskForAdvertisement/A
 import ManageMedicines from '../pages/Dashboard/Seller/ManageMedicines/ManageMedicines'
 import PaymentHistory from '../pages/Dashboard/Customer/PaymentHistory/PaymentHistory'
 import PurchaseHistory from '../pages/Dashboard/Seller/PaymentHistory/PurchaseHistory'
+import Shop from '../pages/Shop/Shop'
+import Cart from '../pages/Cart/Cart'
 
 export const router = createBrowserRouter([
     {
@@ -28,8 +30,12 @@ export const router = createBrowserRouter([
                 element: <Home />,
             },
             {
-                path: '/plant/:id',
-                element: <CategoryDetails />,
+                path: '/shop',
+                element: <Shop />,
+            },
+            {
+                path: '/cart',
+                element: <Cart />,
             },
             {
                 path: '/login',
