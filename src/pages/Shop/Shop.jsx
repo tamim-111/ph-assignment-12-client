@@ -1,9 +1,10 @@
 import React from 'react';
+import CategoryDetails from '../Home/CategoryDetails/CategoryDetails';
 
 const Shop = () => {
     return (
         <div>
-            Shop
+            <CategoryDetails></CategoryDetails>
         </div>
     );
 };
