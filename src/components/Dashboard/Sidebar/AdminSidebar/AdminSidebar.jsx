@@ -1,9 +1,10 @@
 import React from 'react';
+import { NavLink } from 'react-router';
 
 const AdminSidebar = () => {
     return (
         <div>
-            AdminSidebar
+            <NavLink>Manage Users</NavLink>
         </div>
     );
 };

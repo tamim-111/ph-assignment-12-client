@@ -67,16 +67,12 @@ export const router = createBrowserRouter([
             },
             // admin Dashboard
             {
-                path: 'admin/manage-banner-advertise',
-                element: <ManageBannerAdvertise />
+                path: 'admin/manage-users',
+                element: <ManageUsers />
             },
             {
                 path: 'admin/manage-category',
                 element: <ManageCategory />
-            },
-            {
-                path: 'admin/manage-users',
-                element: <ManageUsers />
             },
             {
                 path: 'admin/payment-management',
@@ -86,11 +82,11 @@ export const router = createBrowserRouter([
                 path: 'admin/sales-report',
                 element: <SalesReport />
             },
-            // seller dashboard
             {
-                path: 'seller/ask-for-advertisement',
-                element: <AskForAdvertisement />
+                path: 'admin/manage-banner-advertise',
+                element: <ManageBannerAdvertise />
             },
+            // seller dashboard
             {
                 path: 'seller/manage-medicines',
                 element: <ManageMedicines />
@@ -98,6 +94,10 @@ export const router = createBrowserRouter([
             {
                 path: 'seller/purchase-history',
                 element: <PurchaseHistory />
+            },
+            {
+                path: 'seller/ask-for-advertisement',
+                element: <AskForAdvertisement />
             },
         ],
     },
