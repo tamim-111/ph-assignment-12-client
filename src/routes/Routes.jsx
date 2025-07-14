@@ -18,6 +18,7 @@ import PaymentHistory from '../pages/Dashboard/Customer/PaymentHistory/PaymentHi
 import PurchaseHistory from '../pages/Dashboard/Seller/PaymentHistory/PurchaseHistory'
 import Shop from '../pages/Shop/Shop'
 import Cart from '../pages/Cart/Cart'
+import UpdateProfile from '../pages/Auth/UpdateProfile/UpdateProfile'
 
 export const router = createBrowserRouter([
     {
@@ -44,6 +45,10 @@ export const router = createBrowserRouter([
             {
                 path: '/signup',
                 element: <SignUp />
+            },
+            {
+                path: '/update-profile',
+                element: <UpdateProfile />
             },
         ],
     },
