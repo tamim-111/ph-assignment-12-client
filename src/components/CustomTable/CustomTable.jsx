@@ -1,5 +1,5 @@
 import React from 'react'
-import { useReactTable, getCoreRowModel, flexRender, createColumnHelper } from '@tanstack/react-table'
+import { useReactTable, getCoreRowModel, flexRender } from '@tanstack/react-table'
 
 const CustomTable = ({ columns, data }) => {
     const table = useReactTable({
