@@ -43,19 +43,11 @@ export const router = createBrowserRouter([
     },
     {
         path: '/dashboard',
-        element: (
-            <PrivateRoute>
-                <DashboardLayout />
-            </PrivateRoute>
-        ),
+        element: <DashboardLayout />,
         children: [
             {
                 index: true,
-                element: (
-                    <PrivateRoute>
-                        <DashboardHome /> // Show Role based home for customer/seller/admin
-                    </PrivateRoute>
-                ),
+                element: <DashboardHome /> // Show Role based home for customer/seller/admin
             },
             // customer Dashboard
             {
