@@ -1,5 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router';
+import Button from '../../components/Button/Button';
 
 const ErrorPage = () => {
     return (
@@ -14,11 +15,11 @@ const ErrorPage = () => {
                 <p className="text-xl text-gray-700 mb-6">
                     Uh-oh! The medicine you're looking for isn't on this shelf. Let's go back to a healthier place.
                 </p>
-                <Link to="/" className="btn bg-gradient-to-r from-[#6BDCF6] to-[#25A8D6] text-white">
-                    Back to Home
+                <Link to="/">
+                    <Button label={'Back To Home'}></Button>
                 </Link>
             </div>
-        </div>
+        </div >
     );
 };
 
