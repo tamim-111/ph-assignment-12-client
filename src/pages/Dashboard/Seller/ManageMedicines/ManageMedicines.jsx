@@ -55,6 +55,7 @@ const ManageMedicines = () => {
             unit: data.unit,
             price: parseFloat(data.price),
             discount: parseFloat(data.discount || 0),
+            stock: parseInt(data.stock),
         }
 
         mutation.mutate(newMedicine)
@@ -151,6 +152,14 @@ const ManageMedicines = () => {
                                     <div>
                                         <label className='text-sm'>Discount (%)</label>
                                         <input type='number' defaultValue={0} {...register('discount')} className='input input-bordered w-full' />
+                                    </div>
+                                    <div>
+                                        <label className='text-sm'>Stock Quantity</label>
+                                        <input
+                                            type='number'
+                                            {...register('stock', { required: true })}
+                                            className='input input-bordered w-full'
+                                        />
                                     </div>
                                 </div>
                                 <div className='text-right'>
