@@ -1,23 +1,37 @@
-import { useState } from 'react'
-import { FaUserShield, FaUserTie, FaUser, FaStore } from 'react-icons/fa'
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
+import { FaUserShield, FaUser, FaStore } from 'react-icons/fa'
 import { toast } from 'react-hot-toast'
 import Button from '../../../../components/Button/Button'
 import CustomTable from '../../../../components/CustomTable/CustomTable'
+import useAxiosSecure from '../../../../hooks/useAxiosSecure'
 
 const ManageUsers = () => {
-    const [users, setUsers] = useState([
-        { id: '1', name: 'Tamim', email: 'tamim@example.com', role: 'customer' },
-        { id: '2', name: 'Karim', email: 'karim@example.com', role: 'seller' },
-        { id: '3', name: 'Admin Mia', email: 'admin@example.com', role: 'admin' },
-    ])
+    const axiosSecure = useAxiosSecure()
+    const queryClient = useQueryClient()
 
-    const updateRole = (id, newRole) => {
-        const updatedUsers = users.map(user =>
-            user.id === id ? { ...user, role: newRole } : user
-        )
-        setUsers(updatedUsers)
-        toast.success(`User role updated to "${newRole}"`)
-        // TODO: Send PATCH/PUT request to backend
+    // Fetch all users
+    const { data: users = [], isLoading } = useQuery({
+        queryKey: ['users'],
+        queryFn: async () => {
+            const res = await axiosSecure.get('/users')
+            return res.data
+        },
+    })
+
+    // Update role mutation
+    const { mutateAsync: updateUserRole } = useMutation({
+        mutationFn: async ({ id, role }) => {
+            const res = await axiosSecure.patch(`/users/role/${id}`, { role })
+            return res.data
+        },
+        onSuccess: (_, { role }) => {
+            toast.success(`User role updated to "${role}"`)
+            queryClient.invalidateQueries(['users'])
+        },
+    })
+
+    const handleRoleChange = (id, role) => {
+        updateUserRole({ id, role })
     }
 
     const columns = [
@@ -34,13 +48,13 @@ const ManageUsers = () => {
         },
         {
             header: 'Actions',
-            accessorKey: 'id',
+            accessorKey: '_id',
             cell: info => {
                 const row = info.row.original
 
                 if (row.role === 'admin') {
                     return (
-                        <span className='text-sm font-semibold italic text-[#25A8D6]'>
+                        <span className='text-sm font-semibold text-green-600'>
                             WEBSITE ADMIN
                         </span>
                     )
@@ -55,7 +69,7 @@ const ManageUsers = () => {
                                         <FaStore /> Make Seller
                                     </span>
                                 }
-                                onClick={() => updateRole(row.id, 'seller')}
+                                onClick={() => handleRoleChange(row._id, 'seller')}
                                 className='btn-xs'
                             />
                         )}
@@ -66,7 +80,7 @@ const ManageUsers = () => {
                                         <FaUser /> Make Customer
                                     </span>
                                 }
-                                onClick={() => updateRole(row.id, 'customer')}
+                                onClick={() => handleRoleChange(row._id, 'customer')}
                                 className='btn-xs btn-warning'
                             />
                         )}
@@ -76,7 +90,7 @@ const ManageUsers = () => {
                                     <FaUserShield /> Make Admin
                                 </span>
                             }
-                            onClick={() => updateRole(row.id, 'admin')}
+                            onClick={() => handleRoleChange(row._id, 'admin')}
                             className='btn-xs btn-outline'
                         />
                     </div>
@@ -88,7 +102,7 @@ const ManageUsers = () => {
     return (
         <div className='p-4 md:p-6'>
             <h2 className='text-2xl font-bold text-[#25A8D6] mb-4'>Manage Customers</h2>
-            <CustomTable data={users} columns={columns} />
+            <CustomTable data={users} columns={columns} isLoading={isLoading} />
         </div>
     )
 }
