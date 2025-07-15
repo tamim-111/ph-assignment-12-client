@@ -19,6 +19,7 @@ import PurchaseHistory from '../pages/Dashboard/Seller/PaymentHistory/PurchaseHi
 import Shop from '../pages/Shop/Shop'
 import Cart from '../pages/Cart/Cart'
 import UpdateProfile from '../pages/Auth/UpdateProfile/UpdateProfile'
+import Checkout from '../pages/Checkout/Checkout'
 
 export const router = createBrowserRouter([
     {
@@ -41,6 +42,10 @@ export const router = createBrowserRouter([
             {
                 path: '/cart',
                 element: <Cart />,
+            },
+            {
+                path: '/checkout',
+                element: <Checkout />,
             },
             {
                 path: '/login',
