@@ -5,6 +5,7 @@ import { FaCartPlus } from 'react-icons/fa'
 import Container from '../../container/Container'
 import { Autoplay } from 'swiper/modules'
 import Button from '../../Button/Button'
+import { Link } from 'react-router'
 
 const demoDiscountProducts = [
     {
@@ -97,13 +98,15 @@ const DiscountProducts = () => {
                                             -{discount}%
                                         </div>
 
-                                        <Button wideFull={true} label={
-                                            <span className='flex items-center justify-center gap-2'>
-                                                <FaCartPlus />
-                                                Add To Cart
-                                            </span>
-                                        }
-                                        />
+                                        <Link to='/cart'>
+                                            <Button wideFull={true} label={
+                                                <span className='flex items-center justify-center gap-2'>
+                                                    <FaCartPlus />
+                                                    Add To Cart
+                                                </span>
+                                            }
+                                            />
+                                        </Link>
                                     </div>
                                 </SwiperSlide>
                             )
