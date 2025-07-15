@@ -20,6 +20,7 @@ import Shop from '../pages/Shop/Shop'
 import Cart from '../pages/Cart/Cart'
 import UpdateProfile from '../pages/Auth/UpdateProfile/UpdateProfile'
 import Checkout from '../pages/Checkout/Checkout'
+import Invoice from '../pages/Invoice/Invoice'
 
 export const router = createBrowserRouter([
     {
@@ -46,6 +47,10 @@ export const router = createBrowserRouter([
             {
                 path: '/checkout',
                 element: <Checkout />,
+            },
+            {
+                path: '/invoice',
+                element: <Invoice />,
             },
             {
                 path: '/login',

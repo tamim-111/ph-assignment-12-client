@@ -8,6 +8,11 @@ import { Toaster } from 'react-hot-toast'
 import 'swiper/css'
 import 'swiper/css/navigation'
 import 'swiper/css/pagination'
+// for @react-pdf/renderer buffer problem
+import { Buffer } from 'buffer'
+if (typeof window !== 'undefined' && !window.Buffer) {
+  window.Buffer = Buffer
+}
 
 createRoot(document.getElementById('root')).render(
   <StrictMode>
