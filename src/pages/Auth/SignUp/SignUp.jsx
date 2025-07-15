@@ -92,6 +92,17 @@ const SignUp = () => {
                         />
                     </div>
 
+                    <div>
+                        <label htmlFor='role' className='block mb-2 text-sm'>Select Role</label>
+                        <select
+                            {...register('role', { required: true })}
+                            className='w-full px-3 py-2 rounded-md border border-gray-300 bg-gray-200 focus:ring-2 focus:ring-[#25A8D6]'
+                        >
+                            <option value='customer'>Customer</option>
+                            <option value='seller'>Seller</option>
+                        </select>
+                    </div>
+
                     <Button type='submit' wideFull={true} label='Sign Up'></Button>
 
                 </form>
