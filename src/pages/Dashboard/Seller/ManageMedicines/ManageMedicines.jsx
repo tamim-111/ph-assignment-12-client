@@ -1,4 +1,3 @@
-// ManageMedicines.jsx
 import { useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { Dialog, DialogPanel, DialogTitle, Transition } from '@headlessui/react'
@@ -8,70 +7,63 @@ import { imageUpload } from '../../../../api/utils'
 import Button from '../../../../components/Button/Button'
 import CustomTable from '../../../../components/CustomTable/CustomTable'
 import toast from 'react-hot-toast'
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
+import useAxiosSecure from '../../../../hooks/useAxiosSecure'
+import LoadingSpinner from '../../../../components/Spinner/LoadingSpinner'
 
 const ManageMedicines = () => {
     const [isOpen, setIsOpen] = useState(false)
-    const [medicines, setMedicines] = useState([
-        {
-            name: 'Napa',
-            generic: 'Paracetamol',
-            description: 'Pain reliever and fever reducer',
-            image: 'https://i.ibb.co/MC5F5Sw/napa.jpg',
-            category: 'Tablet',
-            company: 'Beximco',
-            unit: 'Mg',
-            price: 2,
-            discount: 0,
-        },
-        {
-            name: 'Maxpro',
-            generic: 'Esomeprazole',
-            description: 'Used to treat acid reflux',
-            image: 'https://i.ibb.co/vQ3Pv9W/maxpro.jpg',
-            category: 'Capsule',
-            company: 'Square',
-            unit: 'Mg',
-            price: 5,
-            discount: 10,
-        },
-        {
-            name: 'Fexo',
-            generic: 'Fexofenadine',
-            description: 'Antihistamine for allergy relief',
-            image: 'https://i.ibb.co/XYJdW0c/fexo.jpg',
-            category: 'Tablet',
-            company: 'Incepta',
-            unit: 'Mg',
-            price: 8,
-            discount: 5,
-        },
-    ])
     const { register, handleSubmit, reset } = useForm()
+    const axiosSecure = useAxiosSecure()
+    const queryClient = useQueryClient()
+
+    // GET all medicines
+    const { data: medicines = [], isLoading } = useQuery({
+        queryKey: ['medicines'],
+        queryFn: async () => {
+            const res = await axiosSecure.get('/medicines')
+            return res.data
+        }
+    })
+
+    // POST new medicine
+    const mutation = useMutation({
+        mutationFn: async (newMedicine) => {
+            const res = await axiosSecure.post('/medicines', newMedicine)
+            return res.data
+        },
+        onSuccess: () => {
+            toast.success('Medicine added successfully!')
+            queryClient.invalidateQueries(['medicines'])
+            reset()
+            setIsOpen(false)
+        },
+        onError: () => toast.error('Failed to add medicine')
+    })
 
     const onSubmit = async (data) => {
         const image = data.image[0]
         const imageUrl = await imageUpload(image)
 
         const newMedicine = {
-            ...data,
+            name: data.name,
+            generic: data.generic,
+            description: data.description,
             image: imageUrl,
-            discount: parseFloat(data.discount) || 0,
+            category: data.category,
+            company: data.company,
+            unit: data.unit,
+            price: parseFloat(data.price),
+            discount: parseFloat(data.discount || 0),
         }
 
-        setMedicines([...medicines, newMedicine])
-        toast.success('Medicine added successfully!')
-        reset()
-        setIsOpen(false)
+        mutation.mutate(newMedicine)
     }
 
     const columns = [
         {
             header: 'Image', accessorKey: 'image', cell: info => (
-                <img
-                    src={info.getValue()}
-                    alt='medicine'
-                    className='w-12 h-12 object-cover rounded-md'
-                />
+                <img src={info.getValue()} alt='medicine' className='w-12 h-12 object-cover rounded-md' />
             ),
         },
         { header: 'Name', accessorKey: 'name', cell: info => info.getValue() },
@@ -88,17 +80,20 @@ const ManageMedicines = () => {
             <div className='flex justify-between items-center mb-4'>
                 <h2 className='text-2xl font-bold text-[#25A8D6]'>Manage Medicines</h2>
                 <Button
-                    label={
-                        <span className='flex items-center gap-2'>
-                            <FaPlus /> Add Medicine
-                        </span>
-                    }
+                    label={<span className='flex items-center gap-2'><FaPlus /> Add Medicine</span>}
                     onClick={() => setIsOpen(true)}
                 />
             </div>
 
-            <CustomTable data={medicines} columns={columns} />
+            {isLoading ? (
+                <LoadingSpinner></LoadingSpinner>
+            ) : medicines.length === 0 ? (
+                <p className='text-gray-500 text-center mt-10'>No medicines found. Click "Add Medicine" to create your first entry.</p>
+            ) : (
+                <CustomTable data={medicines} columns={columns} />
+            )}
 
+            {/* Modal Form */}
             <Transition show={isOpen} as={Fragment}>
                 <Dialog as='div' className='relative z-50' onClose={() => setIsOpen(false)}>
                     <div className='fixed inset-0 bg-black/30 backdrop-blur-sm' />
@@ -121,7 +116,7 @@ const ManageMedicines = () => {
                                     </div>
                                     <div>
                                         <label className='text-sm'>Image</label>
-                                        <input type='file' {...register('image')} required accept='image/*' />
+                                        <input type='file' {...register('image')} required accept='image/*' className='border-gray-300 rounded-md border w-full file:bg-[#6BDCF6] file:text-white file:px-4 file:py-2 file:rounded-md file:font-semibold hover:file:bg-[#25A8D6]' />
                                     </div>
                                     <div>
                                         <label className='text-sm'>Category</label>
