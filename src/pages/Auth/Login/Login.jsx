@@ -5,6 +5,7 @@ import { TbFidgetSpinner } from 'react-icons/tb'
 import Button from '../../../components/Button/Button'
 import useAuth from '../../../hooks/useAuth'
 import LoadingSpinner from '../../../components/Spinner/LoadingSpinner'
+import { saveUserInDb } from '../../../api/utils'
 
 const Login = () => {
     const { signIn, signInWithGoogle, loading, user } = useAuth()
@@ -34,7 +35,14 @@ const Login = () => {
 
     const handleGoogleSignIn = async () => {
         try {
-            await signInWithGoogle()
+            const result = await signInWithGoogle()
+            const user = result.user
+            // send user data in server
+            await saveUserInDb({
+                name: user.displayName,
+                email: user.email,
+                role: 'customer',
+            })
             toast.success('Login Successful')
             navigate(from, { replace: true })
         } catch (err) {
