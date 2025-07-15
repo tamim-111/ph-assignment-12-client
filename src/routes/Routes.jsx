@@ -21,6 +21,7 @@ import Cart from '../pages/Cart/Cart'
 import UpdateProfile from '../pages/Auth/UpdateProfile/UpdateProfile'
 import Checkout from '../pages/Checkout/Checkout'
 import Invoice from '../pages/Invoice/Invoice'
+import PrivateRoute from './PrivateRoute'
 
 export const router = createBrowserRouter([
     {
@@ -34,23 +35,23 @@ export const router = createBrowserRouter([
             },
             {
                 path: '/categoryDetails/:id',
-                element: <CategoryDetails />,
+                element: <PrivateRoute><CategoryDetails /></PrivateRoute>,
             },
             {
                 path: '/shop',
-                element: <Shop />,
+                element: <PrivateRoute><Shop /></PrivateRoute>
             },
             {
                 path: '/cart',
-                element: <Cart />,
+                element: <PrivateRoute><Cart /></PrivateRoute>,
             },
             {
                 path: '/checkout',
-                element: <Checkout />,
+                element: <PrivateRoute><Checkout /></PrivateRoute>,
             },
             {
                 path: '/invoice',
-                element: <Invoice />,
+                element: <PrivateRoute><Invoice /></PrivateRoute>,
             },
             {
                 path: '/login',
@@ -62,7 +63,7 @@ export const router = createBrowserRouter([
             },
             {
                 path: '/update-profile',
-                element: <UpdateProfile />
+                element: <PrivateRoute><UpdateProfile /></PrivateRoute>
             },
         ],
     },
@@ -72,46 +73,46 @@ export const router = createBrowserRouter([
         children: [
             {
                 index: true,
-                element: <DashboardHome /> // Show Role based home for customer/seller/admin
+                element: <PrivateRoute><DashboardHome /></PrivateRoute> // Show Role based home for customer/seller/admin
             },
             // customer Dashboard
             {
                 path: 'customer/payment-history',
-                element: <PaymentHistory />
+                element: <PrivateRoute><PaymentHistory /></PrivateRoute>
             },
             // admin Dashboard
             {
                 path: 'admin/manage-users',
-                element: <ManageUsers />
+                element: <PrivateRoute><ManageUsers /></PrivateRoute>
             },
             {
                 path: 'admin/manage-category',
-                element: <ManageCategory />
+                element: <PrivateRoute><ManageCategory /></PrivateRoute>
             },
             {
                 path: 'admin/payment-management',
-                element: <PaymentManagement />
+                element: <PrivateRoute><PaymentManagement /></PrivateRoute>
             },
             {
                 path: 'admin/sales-report',
-                element: <SalesReport />
+                element: <PrivateRoute><SalesReport /></PrivateRoute>
             },
             {
                 path: 'admin/manage-banner-advertise',
-                element: <ManageBannerAdvertise />
+                element: <PrivateRoute><ManageBannerAdvertise /></PrivateRoute>
             },
             // seller dashboard
             {
                 path: 'seller/manage-medicines',
-                element: <ManageMedicines />
+                element: <PrivateRoute><ManageMedicines /></PrivateRoute>
             },
             {
                 path: 'seller/purchase-history',
-                element: <PurchaseHistory />
+                element: <PrivateRoute><PurchaseHistory /></PrivateRoute>
             },
             {
                 path: 'seller/ask-for-advertisement',
-                element: <AskForAdvertisement />
+                element: <PrivateRoute><AskForAdvertisement /></PrivateRoute>
             },
         ],
     },
