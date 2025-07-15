@@ -5,7 +5,7 @@ import { toast } from 'react-hot-toast'
 import { TbFidgetSpinner } from 'react-icons/tb'
 import { getAuth } from 'firebase/auth'
 import useAuth from '../../../hooks/useAuth'
-import { imageUpload } from '../../../api/utils'
+import { imageUpload, saveUserInDb } from '../../../api/utils'
 import Button from '../../../components/Button/Button'
 import LoadingSpinner from '../../../components/Spinner/LoadingSpinner'
 
@@ -27,6 +27,13 @@ const SignUp = () => {
             await auth.currentUser.reload()
             setUser({ ...auth.currentUser })
 
+            // Save to DB
+            await saveUserInDb({
+                name: data.name,
+                email: data.email,
+                role: data.role,
+            })
+
             toast.success('Signup Successful')
             navigate('/')
         } catch (err) {
@@ -37,7 +44,16 @@ const SignUp = () => {
 
     const handleGoogleSignIn = async () => {
         try {
-            await signInWithGoogle()
+            const result = await signInWithGoogle()
+            const user = result.user
+
+            // Save to DB with default role = customer
+            await saveUserInDb({
+                name: user.displayName,
+                email: user.email,
+                role: 'customer',
+            })
+
             toast.success('Signup Successful')
             navigate('/')
         } catch (err) {
@@ -104,7 +120,6 @@ const SignUp = () => {
                     </div>
 
                     <Button type='submit' wideFull={true} label='Sign Up'></Button>
-
                 </form>
 
                 <div className='flex items-center my-4 space-x-2'>
