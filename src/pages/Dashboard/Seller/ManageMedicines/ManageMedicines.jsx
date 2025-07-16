@@ -26,6 +26,16 @@ const ManageMedicines = () => {
         }
     })
 
+    // GET categories from DB
+    const { data: categories = [], isLoading: isCategoryLoading } = useQuery({
+        queryKey: ['categories'],
+        queryFn: async () => {
+            const res = await axiosSecure.get('/categories')
+            return res.data
+        }
+    })
+
+
     // POST new medicine
     const mutation = useMutation({
         mutationFn: async (newMedicine) => {
@@ -121,12 +131,17 @@ const ManageMedicines = () => {
                                     </div>
                                     <div>
                                         <label className='text-sm'>Category</label>
-                                        <select {...register('category')} className='select select-bordered w-full'>
-                                            <option value='Tablet'>Tablet</option>
-                                            <option value='Syrup'>Syrup</option>
-                                            <option value='Capsule'>Capsule</option>
-                                            <option value='Injection'>Injection</option>
-                                            <option value='Other'>Other</option>
+                                        <select {...register('category')} className='select select-bordered w-full' required>
+                                            <option value=''>Select a category</option>
+                                            {isCategoryLoading ? (
+                                                <option disabled>Loading...</option>
+                                            ) : (
+                                                categories.map(cat => (
+                                                    <option key={cat._id} value={cat.name}>
+                                                        {cat.name}
+                                                    </option>
+                                                ))
+                                            )}
                                         </select>
                                     </div>
                                     <div>
