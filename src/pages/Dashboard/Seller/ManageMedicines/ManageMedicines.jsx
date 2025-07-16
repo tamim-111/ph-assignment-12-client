@@ -66,6 +66,8 @@ const ManageMedicines = () => {
             price: parseFloat(data.price),
             discount: parseFloat(data.discount || 0),
             stock: parseInt(data.stock),
+            advertised: false,
+            requested: false,
         }
 
         mutation.mutate(newMedicine)
