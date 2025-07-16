@@ -1,88 +1,85 @@
+// File: src/pages/Checkout.jsx
 import React from 'react'
+import { Link, useNavigate } from 'react-router'
 import { useForm } from 'react-hook-form'
+import { useQuery } from '@tanstack/react-query'
+import useAuth from '../../hooks/useAuth'
+import useAxiosSecure from '../../hooks/useAxiosSecure'
+import CustomTable from '../../components/CustomTable/CustomTable'
+import { loadStripe } from '@stripe/stripe-js'
+import { Elements } from '@stripe/react-stripe-js'
+import Container from '../../components/container/Container'
 import Button from '../../components/Button/Button'
-import { Link } from 'react-router'
+
+const stripePromise = loadStripe(import.meta.env.VITE_STRIPE_PK)
 
 const Checkout = () => {
-    const { register, handleSubmit, reset } = useForm()
-    const total = 120 // You can replace this with props or context later
+    const { user } = useAuth()
+    const axiosSecure = useAxiosSecure()
+    const navigate = useNavigate()
 
-    const onSubmit = (data) => {
-        console.log('Checkout Info:', data)
-        alert('Checkout Successful! (Demo)')
-        reset()
-    }
+    const { data: cartItems = [], isLoading } = useQuery({
+        queryKey: ['cartItems'],
+        queryFn: async () => {
+            const res = await axiosSecure.get('/carts')
+            return res.data
+        },
+    })
+
+    const total = cartItems.reduce(
+        (acc, item) => acc + item.quantity * item.price,
+        0
+    )
+
+    const columns = [
+        { header: 'Name', accessorKey: 'name', cell: info => info.getValue() },
+        { header: 'Quantity', accessorKey: 'quantity', cell: info => info.getValue() },
+        { header: 'Price (৳)', accessorKey: 'price', cell: info => `৳${info.getValue()}` },
+        { header: 'Subtotal', cell: ({ row }) => `৳${row.original.quantity * row.original.price}` },
+    ]
 
     return (
-        <div className='min-h-screen flex items-center justify-center px-4 py-10'>
-            <div className='w-full max-w-3xl bg-white rounded-xl shadow-xl p-8'>
-                <h2 className='text-3xl font-bold text-center mb-8 text-[#25A8D6]'>Checkout</h2>
+        <Container>
+            <div className='min-h-screen py-10 px-4'>
+                <div className='max-w-5xl mx-auto bg-white shadow-md rounded-lg p-8'>
+                    <h2 className='text-3xl font-bold text-center mb-6 text-[#25A8D6]'>Checkout</h2>
 
-                <form onSubmit={handleSubmit(onSubmit)} className='grid grid-cols-1 md:grid-cols-2 gap-6'>
-                    {/* User Info Column */}
-                    <div className='space-y-4'>
-                        <div>
-                            <label className='block text-sm font-medium mb-1 text-gray-700'>Full Name</label>
-                            <input
-                                type='text'
-                                {...register('name')}
-                                className='input input-bordered w-full'
-                                placeholder='John Doe'
-                                required
-                            />
+                    {/* User Info Summary */}
+                    <div className='space-y-3'>
+                        <div className='flex justify-between'>
+                            <div>
+                                <span className='font-medium text-gray-600'>Customer:</span>
+                                <p className='text-lg'>{user?.displayName}</p>
+                            </div>
+                            <div>
+                                <span className='font-medium text-gray-600'>Email:</span>
+                                <p className='text-lg'>{user?.email}</p>
+                            </div>
                         </div>
-                        <div>
-                            <label className='block text-sm font-medium mb-1 text-gray-700'>Email Address</label>
-                            <input
-                                type='email'
-                                {...register('email')}
-                                className='input input-bordered w-full'
-                                placeholder='john@example.com'
-                                required
-                            />
-                        </div>
-                        <div>
-                            <label className='block text-sm font-medium mb-1 text-gray-700'>Phone Number</label>
-                            <input
-                                type='tel'
-                                {...register('phone')}
-                                className='input input-bordered w-full'
-                                placeholder='+880123456789'
-                            />
-                        </div>
-                        <div>
-                            <label className='block text-sm font-medium mb-1 text-gray-700'>Shipping Address</label>
-                            <textarea
-                                {...register('address')}
-                                className='textarea textarea-bordered w-full'
-                                placeholder='Your full shipping address'
-                                required
-                            ></textarea>
+                        <div className='mt-6'>
+                            <h3 className='text-xl font-semibold mb-2 text-[#25A8D6]'>Order Summary</h3>
+                            {isLoading ? (
+                                <p>Loading...</p>
+                            ) : (
+                                <CustomTable columns={columns} data={cartItems} />
+                            )}
+                            <div className='text-right mt-4 text-xl font-bold'>
+                                Total: <span className='text-[#25A8D6]'>৳{total}</span>
+                            </div>
                         </div>
                     </div>
 
-                    {/* Order Summary Column */}
-                    <div className='bg-gray-50 p-6 rounded-lg shadow-md space-y-4'>
-                        <h3 className='text-xl font-semibold text-[#25A8D6] mb-2'>Order Summary</h3>
-
-                        <div className='flex justify-between'>
-                            <span>Subtotal:</span>
-                            <span>৳{total}</span>
-                        </div>
-                        <div className='flex justify-between'>
-                            <span>Shipping:</span>
-                            <span>৳0</span>
-                        </div>
-                        <div className='flex justify-between font-semibold text-lg border-t pt-2'>
-                            <span>Total:</span>
-                            <span className='text-[#25A8D6]'>৳{total}</span>
-                        </div>
-
-                        <Link to={'/invoice'}><Button type='submit' wideFull label='Pay Now' /></Link>
-                    </div>
-                </form>
+                    {/* Stripe Payment Section
+                    <div className='bg-gray-50 p-6 rounded-md shadow-inner'>
+                        <h3 className='text-xl font-semibold mb-4 text-[#25A8D6]'>Payment Details</h3>
+                        <Elements stripe={stripePromise}>
+                            <CheckoutForm total={total} cartItems={cartItems} user={user} navigate={navigate} />
+                        </Elements>
+                    </div> */}
+                    <Link to={'/invoice'}><Button type='submit' wideFull label='Pay Now' /></Link>
+                </div>
             </div>
-        </div>
+        </Container>
     )
 }
 
