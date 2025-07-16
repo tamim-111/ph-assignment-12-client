@@ -6,48 +6,68 @@ import { imageUpload } from '../../../../api/utils'
 import Button from '../../../../components/Button/Button'
 import CustomTable from '../../../../components/CustomTable/CustomTable'
 import { FaEdit, FaTrash, FaPlus } from 'react-icons/fa'
+import useAxiosSecure from '../../../../hooks/useAxiosSecure'
+import { useQuery } from '@tanstack/react-query'
 
 const ManageCategory = () => {
     const [isOpen, setIsOpen] = useState(false)
-    const { register, handleSubmit, reset } = useForm()
+    const [isEditMode, setIsEditMode] = useState(false)
+    const [editId, setEditId] = useState(null)
+    const { register, handleSubmit, reset, setValue } = useForm()
+    const axiosSecure = useAxiosSecure()
 
-    const [categories, setCategories] = useState([
-        {
-            id: '1',
-            name: 'Tablet',
-            image: 'https://i.ibb.co/N1kRYPF/tablet.jpg',
+    const { data: categories = [], refetch } = useQuery({
+        queryKey: ['categories'],
+        queryFn: async () => {
+            const res = await axiosSecure.get('/categories')
+            return res.data
         },
-        {
-            id: '2',
-            name: 'Syrup',
-            image: 'https://i.ibb.co/VtyLSKM/syrup.jpg',
-        },
-    ])
+    })
 
     const onSubmit = async (data) => {
-        const imageFile = data.image[0]
-        const imageUrl = await imageUpload(imageFile)
+        try {
+            const imageFile = data.image[0]
+            const imageUrl = imageFile ? await imageUpload(imageFile) : data.image
 
-        const newCategory = {
-            id: Date.now().toString(),
-            name: data.name,
-            image: imageUrl,
+            const categoryData = {
+                name: data.name,
+                image: imageUrl,
+            }
+
+            if (isEditMode) {
+                await axiosSecure.patch(`/categories/${editId}`, categoryData)
+                toast.success('Category updated')
+            } else {
+                await axiosSecure.post('/categories', categoryData)
+                toast.success('Category added')
+            }
+
+            refetch()
+            reset()
+            setIsOpen(false)
+            setIsEditMode(false)
+            setEditId(null)
+        } catch (err) {
+            toast.error('Failed to save category')
         }
-
-        setCategories([...categories, newCategory])
-        toast.success('Category added successfully!')
-        reset()
-        setIsOpen(false)
     }
 
-    const handleDelete = (id) => {
-        const filtered = categories.filter(category => category.id !== id)
-        setCategories(filtered)
-        toast.success('Category deleted')
+    const handleDelete = async (id) => {
+        try {
+            await axiosSecure.delete(`/categories/${id}`)
+            toast.success('Category deleted')
+            refetch()
+        } catch {
+            toast.error('Failed to delete')
+        }
     }
 
-    const handleUpdate = (id) => {
-        toast('Update functionality goes here')
+    const handleUpdate = (category) => {
+        setValue('name', category.name)
+        setValue('image', category.image)
+        setEditId(category._id)
+        setIsEditMode(true)
+        setIsOpen(true)
     }
 
     const columns = [
@@ -71,19 +91,19 @@ const ManageCategory = () => {
         },
         {
             header: 'Actions',
-            accessorKey: 'id',
+            accessorKey: '_id',
             cell: info => {
-                const { id } = info.row.original
+                const category = info.row.original
                 return (
                     <div className='flex items-center gap-2'>
                         <Button
                             className='btn-xs'
-                            onClick={() => handleUpdate(id)}
+                            onClick={() => handleUpdate(category)}
                             label={<FaEdit />}
                         />
                         <Button
                             className='btn-xs btn-error'
-                            onClick={() => handleDelete(id)}
+                            onClick={() => handleDelete(category._id)}
                             label={<FaTrash />}
                         />
                     </div>
@@ -102,20 +122,24 @@ const ManageCategory = () => {
                             <FaPlus /> Add Category
                         </span>
                     }
-                    onClick={() => setIsOpen(true)}
+                    onClick={() => {
+                        reset()
+                        setIsEditMode(false)
+                        setIsOpen(true)
+                    }}
                 />
             </div>
 
             <CustomTable data={categories} columns={columns} />
 
-            {/* Add Category Modal */}
+            {/* Add/Edit Category Modal */}
             <Transition show={isOpen} as={Fragment}>
                 <Dialog as='div' className='relative z-50' onClose={() => setIsOpen(false)}>
                     <div className='fixed inset-0 bg-black/30 backdrop-blur-sm' />
                     <div className='fixed inset-0 flex items-center justify-center p-4'>
                         <DialogPanel className='w-full max-w-md rounded-xl bg-white p-6 shadow-xl'>
                             <DialogTitle className='text-lg font-semibold text-[#25A8D6] mb-4'>
-                                Add New Category
+                                {isEditMode ? 'Update Category' : 'Add New Category'}
                             </DialogTitle>
 
                             <form onSubmit={handleSubmit(onSubmit)} className='space-y-4'>
@@ -131,14 +155,14 @@ const ManageCategory = () => {
                                     <label className='text-sm text-gray-700'>Upload Image</label>
                                     <input
                                         {...register('image')}
-                                        type='file'
+                                        type={isEditMode ? 'text' : 'file'}
                                         accept='image/*'
                                         className='file-input file-input-bordered w-full'
-                                        required
+                                        required={!isEditMode}
                                     />
                                 </div>
                                 <div className='text-right'>
-                                    <Button type='submit' label='Add Category' />
+                                    <Button type='submit' label={isEditMode ? 'Update' : 'Add Category'} />
                                 </div>
                             </form>
                         </DialogPanel>
