@@ -10,8 +10,9 @@ import { loadStripe } from '@stripe/stripe-js'
 import { Elements } from '@stripe/react-stripe-js'
 import Container from '../../components/container/Container'
 import Button from '../../components/Button/Button'
+import CheckoutForm from '../../../src/components/Form/CheckoutForm/CheckoutForm'
 
-const stripePromise = loadStripe(import.meta.env.VITE_STRIPE_PK)
+const stripePromise = loadStripe(import.meta.env.VITE_STRIPE_PK_KEY)
 
 const Checkout = () => {
     const { user } = useAuth()
@@ -69,14 +70,13 @@ const Checkout = () => {
                         </div>
                     </div>
 
-                    {/* Stripe Payment Section
-                    <div className='bg-gray-50 p-6 rounded-md shadow-inner'>
-                        <h3 className='text-xl font-semibold mb-4 text-[#25A8D6]'>Payment Details</h3>
-                        <Elements stripe={stripePromise}>
-                            <CheckoutForm total={total} cartItems={cartItems} user={user} navigate={navigate} />
-                        </Elements>
-                    </div> */}
-                    <Link to={'/invoice'}><Button type='submit' wideFull label='Pay Now' /></Link>
+                    <Elements stripe={stripePromise}>
+                        <CheckoutForm
+                            totalPrice={total}
+                            orderData={{ items: cartItems }}
+                        />
+                    </Elements>
+
                 </div>
             </div>
         </Container>
