@@ -27,7 +27,21 @@ const Shop = () => {
 
     const handleAddToCart = async (medicine) => {
         try {
-            const res = await axiosSecure.post('/cart', medicine)
+            const { data: existingCartItems } = await axiosSecure.get('/cart')
+            const alreadyExists = existingCartItems.find(item => item._id === medicine._id)
+
+            if (alreadyExists) {
+                toast.error('Already in cart')
+                return
+            }
+
+            const cartItem = {
+                ...medicine,
+                quantity: 1,
+                subtotal: medicine.price,
+            }
+
+            const res = await axiosSecure.post('/cart', cartItem)
             if (res.data.insertedId) {
                 toast.success(`Added "${medicine.name}" to cart`)
             }
