@@ -1,64 +1,55 @@
-import React from 'react'
+import React, { useState } from 'react'
 import { Swiper, SwiperSlide } from 'swiper/react'
 import 'swiper/css'
 import { FaCartPlus } from 'react-icons/fa'
 import Container from '../../container/Container'
 import { Autoplay } from 'swiper/modules'
 import Button from '../../Button/Button'
-import { Link } from 'react-router'
-
-const demoDiscountProducts = [
-    {
-        id: '1',
-        name: 'Napa Extra',
-        image: 'https://shorturl.at/ps2HJ',
-        price: 8,
-        discountPercentage: 33, // Seller-defined
-    },
-    {
-        id: '2',
-        name: 'Maxpro 20mg',
-        image: 'https://shorturl.at/ps2HJ',
-        price: 13,
-        discountPercentage: 27,
-    },
-    {
-        id: '3',
-        name: 'Ceevit Vitamin C',
-        image: 'https://shorturl.at/ps2HJ',
-        price: 7,
-        discountPercentage: 30,
-    },
-    {
-        id: '4',
-        name: 'Ceevit Vitamin C',
-        image: 'https://shorturl.at/ps2HJ',
-        price: 7,
-        discountPercentage: 30,
-    },
-    {
-        id: '5',
-        name: 'Ceevit Vitamin C',
-        image: 'https://shorturl.at/ps2HJ',
-        price: 7,
-        discountPercentage: 30,
-    },
-    {
-        id: '6',
-        name: 'Ceevit Vitamin C',
-        image: 'https://shorturl.at/ps2HJ',
-        price: 7,
-        discountPercentage: 30,
-    },
-]
+import { useQuery } from '@tanstack/react-query'
+import useAxiosSecure from '../../../hooks/useAxiosSecure'
+import toast from 'react-hot-toast'
 
 const DiscountProducts = () => {
-    return (
-        <>
-            <Container>
-                <section className='my-32'>
-                    <h2 className='text-3xl font-bold text-center mb-6 text-[#25A8D6]'>Discounted Medicines</h2>
+    const [addedToCartIds, setAddedToCartIds] = useState([])
+    const axiosSecure = useAxiosSecure()
 
+    // Fetch discounted products using TanStack Query
+    const { data: discountProducts = [], isLoading } = useQuery({
+        queryKey: ['discountedMedicines'],
+        queryFn: async () => {
+            const res = await axiosSecure.get('/medicines/discounted')
+            return res.data
+        }
+    })
+
+    const handleAddToCart = async (medicine) => {
+        const cartItem = {
+            ...medicine,
+            medicineId: medicine._id,
+            quantity: 0,
+            subtotal: 0,
+        }
+        delete cartItem._id
+
+        try {
+            const res = await axiosSecure.post('/carts', cartItem)
+            if (res.data.insertedId) {
+                toast.success(`${medicine.name} added to cart`)
+                setAddedToCartIds(prev => [...prev, medicine._id])
+            }
+        } catch (err) {
+            toast.error('Failed to add to cart')
+        }
+    }
+
+    return (
+        <Container>
+            <section className='my-32'>
+                <h2 className='text-3xl font-bold text-center mb-6 text-[#25A8D6]'>Discounted Medicines</h2>
+
+                {isLoading ? (
+                    <p className='text-center text-gray-500'>Loading...</p>
+                ) : (
                     <Swiper
                         spaceBetween={16}
                         slidesPerView={1.2}
@@ -69,18 +60,18 @@ const DiscountProducts = () => {
                         grabCursor={true}
                         loop={true}
                         autoplay={{
-                            delay: 2500, // ms
+                            delay: 2500,
                             disableOnInteraction: false,
                         }}
                         modules={[Autoplay]}
                     >
-                        {demoDiscountProducts.map(product => {
-                            const discount = product.discountPercentage
+                        {discountProducts.map(product => {
+                            const discount = product.discount
                             const newPrice = product.price
                             const oldPrice = Math.round(newPrice / (1 - discount / 100))
 
                             return (
-                                <SwiperSlide key={product.id}>
+                                <SwiperSlide key={product._id}>
                                     <div className='my-3 relative p-4 group bg-white rounded-xl shadow-md hover:shadow-lg transition-transform hover:scale-[1.02] overflow-hidden border border-[#e0f7ff]'>
                                         <img
                                             src={product.image}
@@ -98,23 +89,25 @@ const DiscountProducts = () => {
                                             -{discount}%
                                         </div>
 
-                                        <Link to='/cart'>
-                                            <Button wideFull={true} label={
+                                        <Button
+                                            wideFull={true}
+                                            onClick={() => handleAddToCart(product)}
+                                            disabled={addedToCartIds.includes(product._id)}
+                                            label={
                                                 <span className='flex items-center justify-center gap-2'>
                                                     <FaCartPlus />
                                                     Add To Cart
                                                 </span>
                                             }
-                                            />
-                                        </Link>
+                                        />
                                     </div>
                                 </SwiperSlide>
                             )
                         })}
                     </Swiper>
-                </section>
-            </Container>
-        </>
+                )}
+            </section>
+        </Container>
     )
 }
 
