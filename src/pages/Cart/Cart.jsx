@@ -1,68 +1,94 @@
-import React, { useState } from 'react'
+import React from 'react'
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { FaMinus, FaPlus, FaTrashAlt } from 'react-icons/fa'
+import { Link, useNavigate } from 'react-router'
 import Button from '../../components/Button/Button'
 import CustomTable from '../../components/CustomTable/CustomTable'
-import { Link } from 'react-router'
 import Container from '../../components/container/Container'
-
-const initialCartItems = [
-    {
-        id: '1',
-        name: 'Napa Extra',
-        company: 'Beximco Pharma',
-        stock: 14,
-        price: 8,
-        quantity: 0,
-    },
-    {
-        id: '2',
-        name: 'Maxpro 20mg',
-        company: 'Square Pharma',
-        stock: 93,
-        price: 13,
-        quantity: 0,
-    },
-]
+import useAxiosSecure from '../../hooks/useAxiosSecure'
+import toast from 'react-hot-toast'
 
 const Cart = () => {
-    const [cartItems, setCartItems] = useState(initialCartItems)
+    const axiosSecure = useAxiosSecure()
+    const queryClient = useQueryClient()
+    const navigate = useNavigate()
 
-    const handleIncrease = (id) => {
-        setCartItems(prev =>
-            prev.map(item =>
-                item.id === id && item.stock > 0
-                    ? {
-                        ...item,
-                        quantity: item.quantity + 1,
-                        stock: item.stock - 1,
-                    }
-                    : item
-            )
-        )
+    // Load cart data
+    const { data: cartItems = [], isLoading } = useQuery({
+        queryKey: ['cartItems'],
+        queryFn: async () => {
+            const res = await axiosSecure.get('/carts')
+            return res.data
+        }
+    })
+
+    // Update quantity
+    const updateCartMutation = useMutation({
+        mutationFn: async ({ id, quantity, stock, price }) => {
+            const subtotal = quantity * price
+            return axiosSecure.patch(`/carts/${id}`, { quantity, stock, subtotal })
+        },
+        onSuccess: () => queryClient.invalidateQueries(['cartItems'])
+    })
+
+    const handleIncrease = (item) => {
+        if (item.stock > 0) {
+            updateCartMutation.mutate({
+                id: item._id,
+                quantity: item.quantity + 1,
+                stock: item.stock - 1,
+                price: item.price
+            })
+        }
     }
 
-    const handleDecrease = (id) => {
-        setCartItems(prev =>
-            prev.map(item =>
-                item.id === id && item.quantity > 0
-                    ? {
-                        ...item,
-                        quantity: item.quantity - 1,
-                        stock: item.stock + 1,
-                    }
-                    : item
-            )
-        )
+    const handleDecrease = (item) => {
+        if (item.quantity > 0) {
+            updateCartMutation.mutate({
+                id: item._id,
+                quantity: item.quantity - 1,
+                stock: item.stock + 1,
+                price: item.price
+            })
+        }
     }
+
+    // Delete one cart item
+    const deleteCartMutation = useMutation({
+        mutationFn: async (id) => axiosSecure.delete(`/carts/${id}`),
+        onSuccess: () => queryClient.invalidateQueries(['cartItems'])
+    })
 
     const handleRemove = (id) => {
-        setCartItems(prev => prev.filter(item => item.id !== id))
+        deleteCartMutation.mutate(id)
     }
+
+    // Clear all cart items
+    const clearCartMutation = useMutation({
+        mutationFn: () => axiosSecure.delete('/carts'),
+        onSuccess: () => queryClient.invalidateQueries(['cartItems'])
+    })
 
     const handleClearCart = () => {
-        setCartItems([])
+        clearCartMutation.mutate()
     }
 
+    // Checkout/save cart
+    const handleProceedToCheckout = async () => {
+        try {
+            // Send cart data to backend
+            await axiosSecure.post('/checkout', {
+                items: cartItems,
+                total: totalPrice,
+                date: new Date(),
+            })
+            // Navigate to checkout page
+            navigate('/checkout')
+        } catch (error) {
+            console.error('Checkout failed:', error)
+            toast.error('Failed to process checkout.')
+        }
+    }
     const columns = [
         { header: 'Name', accessorKey: 'name', cell: info => info.getValue() },
         { header: 'Company', accessorKey: 'company', cell: info => info.getValue() },
@@ -78,7 +104,7 @@ const Cart = () => {
             cell: ({ row }) => (
                 <div className='flex items-center gap-2'>
                     <button
-                        onClick={() => handleDecrease(row.original.id)}
+                        onClick={() => handleDecrease(row.original)}
                         className='p-1 rounded bg-gray-200 hover:bg-gray-300'
                         disabled={row.original.quantity === 0}
                     >
@@ -86,7 +112,7 @@ const Cart = () => {
                     </button>
                     <span>{row.original.quantity}</span>
                     <button
-                        onClick={() => handleIncrease(row.original.id)}
+                        onClick={() => handleIncrease(row.original)}
                         className='p-1 rounded bg-gray-200 hover:bg-gray-300'
                         disabled={row.original.stock === 0}
                     >
@@ -97,13 +123,13 @@ const Cart = () => {
         },
         {
             header: 'Subtotal',
-            cell: ({ row }) => `৳${row.original.quantity * row.original.price}`,
+            cell: ({ row }) => `৳${row.original.subtotal || 0}`,
         },
         {
             header: 'Actions',
             cell: ({ row }) => (
                 <button
-                    onClick={() => handleRemove(row.original.id)}
+                    onClick={() => handleRemove(row.original._id)}
                     className='btn btn-sm btn-outline btn-error'
                 >
                     <FaTrashAlt />
@@ -112,14 +138,16 @@ const Cart = () => {
         },
     ]
 
-    const totalPrice = cartItems.reduce((acc, item) => acc + item.price * item.quantity, 0)
+    const totalPrice = cartItems.reduce((acc, item) => acc + item.subtotal, 0)
 
     return (
         <Container>
             <div className='max-w-6xl mx-auto px-4 my-10'>
                 <h2 className='text-3xl font-bold text-[#25A8D6] mb-6 text-center'>Your Cart</h2>
 
-                {cartItems.length > 0 ? (
+                {isLoading ? (
+                    <p className='text-center'>Loading...</p>
+                ) : cartItems.length > 0 ? (
                     <>
                         <CustomTable columns={columns} data={cartItems} />
 
@@ -132,9 +160,7 @@ const Cart = () => {
                                 <p className='text-xl font-semibold'>
                                     Total: <span className='text-[#25A8D6]'>৳{totalPrice}</span>
                                 </p>
-                                <Link to={'/checkout'}>
-                                    <Button label='Proceed to Checkout' />
-                                </Link>
+                                <Button label='Proceed to Checkout' onClick={handleProceedToCheckout} />
                             </div>
                         </div>
                     </>
