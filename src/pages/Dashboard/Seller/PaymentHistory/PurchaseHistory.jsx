@@ -1,49 +1,53 @@
 import { useState } from 'react'
+import { FaCheckCircle, FaClock, FaInfoCircle } from 'react-icons/fa'
+import { useQuery } from '@tanstack/react-query'
+import useAxiosSecure from '../../../../hooks/useAxiosSecure'
+import LoadingSpinner from '../../../../components/Spinner/LoadingSpinner'
 import CustomTable from '../../../../components/CustomTable/CustomTable'
 import PaymentStatusInfoModal from '../../../../components/Modals/PaymentStatusInfoModal'
-import { FaCheckCircle, FaClock, FaInfoCircle } from 'react-icons/fa'
 
 const PurchaseHistory = () => {
     const [isModalOpen, setIsModalOpen] = useState(false)
-    // Demo payment data
-    const [paymentHistory, setPaymentHistory] = useState([
-        {
-            id: 'TXN001',
-            medicine: 'Napa',
-            buyer: 'rahim@example.com',
-            quantity: 10,
-            total: 200,
-            date: '2025-07-10',
-            status: 'paid',
-        },
-        {
-            id: 'TXN002',
-            medicine: 'Maxpro',
-            buyer: 'karim@example.com',
-            quantity: 5,
-            total: 125,
-            date: '2025-07-12',
-            status: 'pending',
-        },
-        {
-            id: 'TXN003',
-            medicine: 'Fexo',
-            buyer: 'salma@example.com',
-            quantity: 3,
-            total: 72,
-            date: '2025-07-13',
-            status: 'paid',
-        },
-    ])
+    const axiosSecure = useAxiosSecure()
 
-    // Columns for the CustomTable
+    // Fetch payments from DB
+    const { data: paymentsRaw = [], isLoading } = useQuery({
+        queryKey: ['payments'],
+        queryFn: async () => {
+            const res = await axiosSecure.get('/payments')
+            return res.data
+        },
+    })
+
+    // Flatten the payments data to extract needed fields for table
+    const payments = paymentsRaw.map(payment => {
+        const items = payment.items || []
+
+        // Medicine names joined by comma
+        const medicineNames = items.map(item => item.name).join(', ')
+
+        // Quantities joined by comma
+        const quantities = items.map(item => item.quantity).join(', ')
+
+        return {
+            id: payment._id,
+            transactionId: payment.transactionId,
+            medicine: medicineNames || 'N/A',
+            buyer: payment.userEmail || 'N/A',
+            quantity: quantities || 'N/A',
+            total: payment.amount || 0,
+            date: payment.date,
+            status: payment.status || 'pending',
+        }
+    })
+
     const columns = [
-        { header: 'Transaction ID', accessorKey: 'id', cell: info => info.getValue() },
-        { header: 'Medicine', accessorKey: 'medicine', cell: info => info.getValue() },
-        { header: 'Buyer', accessorKey: 'buyer', cell: info => info.getValue() },
-        { header: 'Quantity', accessorKey: 'quantity', cell: info => info.getValue() },
+        { header: 'Transaction ID', accessorKey: 'transactionId' },
+        { header: 'Medicine', accessorKey: 'medicine' },
+        { header: 'Buyer', accessorKey: 'buyer' },
+        { header: 'Quantity', accessorKey: 'quantity' },
         { header: 'Total (Tk)', accessorKey: 'total', cell: info => `Tk ${info.getValue()}` },
-        { header: 'Date', accessorKey: 'date', cell: info => info.getValue() },
+        { header: 'Date', accessorKey: 'date', cell: info => new Date(info.getValue()).toLocaleString() },
         {
             header: 'Status',
             accessorKey: 'status',
@@ -81,7 +85,13 @@ const PurchaseHistory = () => {
     return (
         <div className='p-4 md:p-6'>
             <h2 className='text-2xl font-bold text-[#25A8D6] mb-4'>Payment History</h2>
-            <CustomTable data={paymentHistory} columns={columns} />
+            {isLoading ? (
+                <p className='text-center text-gray-500'>Loading payment history...</p>
+            ) : payments.length === 0 ? (
+                <p className='text-center text-gray-500'>No payments found.</p>
+            ) : (
+                <CustomTable data={payments} columns={columns} />
+            )}
             <PaymentStatusInfoModal isOpen={isModalOpen} setIsOpen={setIsModalOpen} />
         </div>
     )
