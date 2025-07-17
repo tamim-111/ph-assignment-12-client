@@ -4,16 +4,19 @@ import { useQuery } from '@tanstack/react-query'
 import useAxiosSecure from '../../../../hooks/useAxiosSecure'
 import CustomTable from '../../../../components/CustomTable/CustomTable'
 import PaymentStatusInfoModal from '../../../../components/Modals/PaymentStatusInfoModal'
+import useAuth from '../../../../hooks/useAuth'
 
 const PaymentHistory = () => {
+    const { user } = useAuth()
     const [isModalOpen, setIsModalOpen] = useState(false)
     const axiosSecure = useAxiosSecure() // ✅ don't destructure it!
 
     // Fetch payment history
     const { data: payments = [], isLoading } = useQuery({
-        queryKey: ['payments'],
+        queryKey: ['payments', user?.email],
+        enabled: !!user?.email,
         queryFn: async () => {
-            const res = await axiosSecure.get('/payments')
+            const res = await axiosSecure.get(`/payments?email=${user.email}`)
             return res.data
         },
     })
