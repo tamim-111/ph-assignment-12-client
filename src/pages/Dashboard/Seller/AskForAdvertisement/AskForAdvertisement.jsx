@@ -6,8 +6,10 @@ import { toast } from 'react-hot-toast'
 import Button from '../../../../components/Button/Button'
 import CustomTable from '../../../../components/CustomTable/CustomTable'
 import useAxiosSecure from '../../../../hooks/useAxiosSecure'
+import useAuth from '../../../../hooks/useAuth'
 
 const AskForAdvertisement = () => {
+    const { user } = useAuth()
     const [isOpen, setIsOpen] = useState(false)
     const [selectedMedicine, setSelectedMedicine] = useState(null)
     const axiosSecure = useAxiosSecure()
@@ -15,12 +17,13 @@ const AskForAdvertisement = () => {
 
     // 1️⃣ Get medicines using TanStack Query
     const { data: medicines = [], isLoading } = useQuery({
-        queryKey: ['medicines'],
+        queryKey: ['medicines', user?.email],
+        enabled: !!user?.email,
         queryFn: async () => {
-            const res = await axiosSecure.get('/medicines')
-            return res.data
+            const res = await axiosSecure.get(`/medicines?seller=${user.email}`);
+            return res.data;
         },
-    })
+    });
 
     // 2️⃣ PATCH request to update requested status
     const { mutateAsync: requestAd } = useMutation({
