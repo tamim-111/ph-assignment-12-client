@@ -10,8 +10,10 @@ import toast from 'react-hot-toast'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import useAxiosSecure from '../../../../hooks/useAxiosSecure'
 import LoadingSpinner from '../../../../components/Spinner/LoadingSpinner'
+import useAuth from '../../../../hooks/useAuth'
 
 const ManageMedicines = () => {
+    const { user } = useAuth()
     const [isOpen, setIsOpen] = useState(false)
     const { register, handleSubmit, reset } = useForm()
     const axiosSecure = useAxiosSecure()
@@ -68,6 +70,7 @@ const ManageMedicines = () => {
             stock: parseInt(data.stock),
             advertised: false,
             requested: false,
+            seller: user?.email
         }
 
         mutation.mutate(newMedicine)
