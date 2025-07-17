@@ -20,9 +20,10 @@ const Checkout = () => {
     const navigate = useNavigate()
 
     const { data: cartItems = [], isLoading } = useQuery({
-        queryKey: ['cartItems'],
+        queryKey: ['cartItems', user?.email],
+        enabled: !!user?.email,
         queryFn: async () => {
-            const res = await axiosSecure.get('/carts')
+            const res = await axiosSecure.get(`/carts/${user.email}`)
             return res.data
         },
     })

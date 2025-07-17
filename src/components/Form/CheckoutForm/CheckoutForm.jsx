@@ -19,15 +19,14 @@ const CheckoutForm = ({ totalPrice, orderData }) => {
     const [processing, setProcessing] = useState(false)
     const [clientSecret, setClientSecret] = useState('')
 
-    // ✅ Only create intent if totalPrice >= 10
+    // ✅ Create payment intent
     useEffect(() => {
-
         const getClientSecret = async () => {
             try {
                 const { data } = await axiosSecure.post('/create-payment-intent', {
                     amount: totalPrice,
                 })
-                setClientSecret(data.clientSecret)
+                setClientSecret(data?.clientSecret)
             } catch (err) {
                 console.error('Error creating payment intent:', err)
                 toast.error('Failed to initialize payment.')
@@ -40,21 +39,21 @@ const CheckoutForm = ({ totalPrice, orderData }) => {
     const handleSubmit = async (event) => {
         event.preventDefault()
 
-        if (!stripe || !elements || totalPrice < 10) return
+        if (!stripe || !elements) return
 
         setProcessing(true)
         setCardError(null)
 
-        const card = elements.getElement(CardElement)
+        const card = elements?.getElement(CardElement)
         if (!card) return
 
-        const { error } = await stripe.createPaymentMethod({
+        const { error: paymentMethodError } = await stripe.createPaymentMethod({
             type: 'card',
             card,
         })
 
-        if (error) {
-            setCardError(error.message)
+        if (paymentMethodError) {
+            setCardError(paymentMethodError.message)
             setProcessing(false)
             return
         }
@@ -63,8 +62,8 @@ const CheckoutForm = ({ totalPrice, orderData }) => {
             payment_method: {
                 card,
                 billing_details: {
-                    name: user?.displayName,
-                    email: user?.email,
+                    name: user?.displayName || 'Anonymous',
+                    email: user?.email || 'No email',
                 },
             },
         })
@@ -79,7 +78,7 @@ const CheckoutForm = ({ totalPrice, orderData }) => {
             const paymentInfo = {
                 userName: user?.displayName,
                 userEmail: user?.email,
-                transactionId: paymentIntent.id,
+                transactionId: paymentIntent?.id,
                 status: 'pending',
                 amount: totalPrice,
                 date: new Date(),
@@ -88,7 +87,7 @@ const CheckoutForm = ({ totalPrice, orderData }) => {
 
             try {
                 const res = await axiosSecure.post('/payments', paymentInfo)
-                if (res.data.insertedId) {
+                if (res?.data?.insertedId) {
                     toast.success('Payment successful!')
                     navigate('/invoice')
                 }
