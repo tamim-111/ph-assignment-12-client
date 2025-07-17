@@ -5,9 +5,12 @@ import logo from '../../../assets/images/logo.svg'
 import CustomerSidebar from './CustomerSidebar/CustomerSidebar'
 import SellerSidebar from './SellerSidebar/SellerSidebar'
 import AdminSidebar from './AdminSidebar/AdminSidebar'
+import useRole from '../../../hooks/useRole'
+import LoadingSpinner from '../../Spinner/LoadingSpinner'
 
 const Sidebar = () => {
     const [isActive, setActive] = useState(false)
+    const { role, isLoading } = useRole()
 
     // Sidebar Responsive Handler
     const handleToggle = () => {
@@ -54,12 +57,10 @@ const Sidebar = () => {
                     {/* Nav Items */}
                     <div className='flex flex-col justify-between flex-1 mt-6'>
                         <nav>
-                            {/* customer */}
-                            <CustomerSidebar></CustomerSidebar>
-                            {/* seller */}
-                            <SellerSidebar></SellerSidebar>
-                            {/* Admin */}
-                            <AdminSidebar></AdminSidebar>
+                            {isLoading && <LoadingSpinner></LoadingSpinner>}
+                            {role === 'customer' && <CustomerSidebar />}
+                            {role === 'seller' && <SellerSidebar />}
+                            {role === 'admin' && <AdminSidebar />}
                         </nav>
                     </div>
                 </div>
