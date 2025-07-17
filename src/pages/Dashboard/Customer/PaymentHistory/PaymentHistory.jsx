@@ -10,7 +10,7 @@ import LoadingSpinner from '../../../../components/Spinner/LoadingSpinner'
 const PaymentHistory = () => {
     const { user } = useAuth()
     const [isModalOpen, setIsModalOpen] = useState(false)
-    const axiosSecure = useAxiosSecure() // ✅ don't destructure it!
+    const axiosSecure = useAxiosSecure() // 
 
     // Fetch payment history
     const { data: payments = [], isLoading } = useQuery({
@@ -86,6 +86,8 @@ const PaymentHistory = () => {
             ) : (
                 <CustomTable data={payments} columns={columns} />
             )}
+
+            <PaymentStatusInfoModal isOpen={isModalOpen} setIsOpen={setIsModalOpen} />
         </div>
     )
 }
