@@ -1,22 +1,40 @@
 import React, { useState } from 'react'
 import { FaCheckCircle, FaClock, FaInfoCircle } from 'react-icons/fa'
+import { useQuery } from '@tanstack/react-query'
+import useAxiosSecure from '../../../../hooks/useAxiosSecure'
 import CustomTable from '../../../../components/CustomTable/CustomTable'
 import PaymentStatusInfoModal from '../../../../components/Modals/PaymentStatusInfoModal'
 
-
 const PaymentHistory = () => {
     const [isModalOpen, setIsModalOpen] = useState(false)
+    const axiosSecure = useAxiosSecure() // ✅ don't destructure it!
 
-    const data = [
-        { id: 'TXN001', date: '2025-07-12', amount: 120, status: 'paid' },
-        { id: 'TXN002', date: '2025-07-10', amount: 75, status: 'pending' },
-        { id: 'TXN003', date: '2025-07-05', amount: 230, status: 'paid' },
-    ]
+    // Fetch payment history
+    const { data: payments = [], isLoading } = useQuery({
+        queryKey: ['payments'],
+        queryFn: async () => {
+            const res = await axiosSecure.get('/payments')
+            return res.data
+        },
+    })
 
+    // Table columns
     const columns = [
-        { header: 'Transaction ID', accessorKey: 'id', cell: info => info.getValue() },
-        { header: 'Date', accessorKey: 'date', cell: info => info.getValue() },
-        { header: 'Amount (Tk)', accessorKey: 'amount', cell: info => `Tk ${info.getValue()}` },
+        {
+            header: 'Transaction ID',
+            accessorKey: 'transactionId',
+            cell: info => info.getValue(),
+        },
+        {
+            header: 'Date',
+            accessorKey: 'date',
+            cell: info => new Date(info.getValue()).toLocaleString(), // Format ISO date
+        },
+        {
+            header: 'Amount (Tk)',
+            accessorKey: 'amount',
+            cell: info => `Tk ${info.getValue()}`,
+        },
         {
             header: 'Status',
             accessorKey: 'status',
@@ -52,9 +70,13 @@ const PaymentHistory = () => {
     ]
 
     return (
-        <div className='p-4 md:p-6'>
-            <h2 className='text-2xl font-bold text-[#25A8D6] mb-4'>My Payment History</h2>
-            <CustomTable data={data} columns={columns} />
+        <div className="p-4 md:p-6">
+            <h2 className="text-2xl font-bold text-[#25A8D6] mb-4">My Payment History</h2>
+            {isLoading ? (
+                <p>Loading...</p>
+            ) : (
+                <CustomTable data={payments} columns={columns} />
+            )}
             <PaymentStatusInfoModal isOpen={isModalOpen} setIsOpen={setIsModalOpen} />
         </div>
     )
