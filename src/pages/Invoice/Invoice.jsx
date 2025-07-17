@@ -118,9 +118,10 @@ const Invoice = () => {
     const { user } = useAuth()
 
     const { data: payments = [], isLoading } = useQuery({
-        queryKey: ['payments'],
+        queryKey: ['payments', user?.email],
+        enabled: !!user?.email,
         queryFn: async () => {
-            const res = await axiosSecure.get('/payments')
+            const res = await axiosSecure.get(`/payments?email=${user.email}`)
             return res.data
         },
     })
