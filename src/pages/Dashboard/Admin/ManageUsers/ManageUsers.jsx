@@ -4,6 +4,7 @@ import { toast } from 'react-hot-toast'
 import Button from '../../../../components/Button/Button'
 import CustomTable from '../../../../components/CustomTable/CustomTable'
 import useAxiosSecure from '../../../../hooks/useAxiosSecure'
+import LoadingSpinner from '../../../../components/Spinner/LoadingSpinner'
 
 const ManageUsers = () => {
     const axiosSecure = useAxiosSecure()
@@ -102,7 +103,15 @@ const ManageUsers = () => {
     return (
         <div className='p-4 md:p-6'>
             <h2 className='text-2xl font-bold text-[#25A8D6] mb-4'>Manage Customers</h2>
-            <CustomTable data={users} columns={columns} isLoading={isLoading} />
+            {isLoading ? (
+                <LoadingSpinner />
+            ) : users.length === 0 ? (
+                <p className='text-gray-500 font-medium text-center mt-6'>
+                    No users found.
+                </p>
+            ) : (
+                <CustomTable data={users} columns={columns} />
+            )}
         </div>
     )
 }

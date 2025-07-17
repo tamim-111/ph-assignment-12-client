@@ -3,6 +3,7 @@ import CustomTable from '../../../../components/CustomTable/CustomTable'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import toast from 'react-hot-toast'
 import useAxiosSecure from '../../../../hooks/useAxiosSecure'
+import LoadingSpinner from '../../../../components/Spinner/LoadingSpinner'
 
 const ManageBannerAdvertise = () => {
     const axiosSecure = useAxiosSecure()
@@ -81,7 +82,15 @@ const ManageBannerAdvertise = () => {
                 Manage Banner Advertise
             </h2>
 
-            {isLoading ? <p>Loading requested ads...</p> : <CustomTable data={ads} columns={columns} />}
+            {isLoading ? (
+                <LoadingSpinner />
+            ) : ads.length === 0 ? (
+                <p className='text-gray-500 font-medium text-center mt-6'>
+                    No ads found.
+                </p>
+            ) : (
+                <CustomTable data={ads} columns={columns} />
+            )}
         </div>
     )
 }

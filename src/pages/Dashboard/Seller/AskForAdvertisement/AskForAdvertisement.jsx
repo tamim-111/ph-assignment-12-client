@@ -7,6 +7,7 @@ import Button from '../../../../components/Button/Button'
 import CustomTable from '../../../../components/CustomTable/CustomTable'
 import useAxiosSecure from '../../../../hooks/useAxiosSecure'
 import useAuth from '../../../../hooks/useAuth'
+import LoadingSpinner from '../../../../components/Spinner/LoadingSpinner'
 
 const AskForAdvertisement = () => {
     const { user } = useAuth()
@@ -101,7 +102,15 @@ const AskForAdvertisement = () => {
         <div className='p-4 md:p-6'>
             <h2 className='text-2xl font-bold text-[#25A8D6] mb-4'>Ask For Advertisement</h2>
 
-            {isLoading ? <p>Loading medicines...</p> : <CustomTable data={medicines} columns={columns} />}
+            {isLoading ? (
+                <LoadingSpinner />
+            ) : medicines.length === 0 ? (
+                <p className='text-gray-500 font-medium text-center mt-6'>
+                    No ads found.
+                </p>
+            ) : (
+                <CustomTable data={medicines} columns={columns} />
+            )}
 
             {/* Modal */}
             <Transition show={isOpen} as={Fragment}>

@@ -5,6 +5,7 @@ import useAxiosSecure from '../../../../hooks/useAxiosSecure'
 import CustomTable from '../../../../components/CustomTable/CustomTable'
 import PaymentStatusInfoModal from '../../../../components/Modals/PaymentStatusInfoModal'
 import useAuth from '../../../../hooks/useAuth'
+import LoadingSpinner from '../../../../components/Spinner/LoadingSpinner'
 
 const PaymentHistory = () => {
     const { user } = useAuth()
@@ -75,12 +76,16 @@ const PaymentHistory = () => {
     return (
         <div className="p-4 md:p-6">
             <h2 className="text-2xl font-bold text-[#25A8D6] mb-4">My Payment History</h2>
+
             {isLoading ? (
-                <p>Loading...</p>
+                <LoadingSpinner />
+            ) : payments.length === 0 ? (
+                <p className='text-gray-500 font-medium text-center mt-6'>
+                    No payments found.
+                </p>
             ) : (
                 <CustomTable data={payments} columns={columns} />
             )}
-            <PaymentStatusInfoModal isOpen={isModalOpen} setIsOpen={setIsModalOpen} />
         </div>
     )
 }

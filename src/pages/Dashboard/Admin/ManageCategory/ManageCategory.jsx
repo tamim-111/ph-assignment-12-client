@@ -8,6 +8,7 @@ import CustomTable from '../../../../components/CustomTable/CustomTable'
 import { FaEdit, FaTrash, FaPlus } from 'react-icons/fa'
 import useAxiosSecure from '../../../../hooks/useAxiosSecure'
 import { useQuery } from '@tanstack/react-query'
+import LoadingSpinner from '../../../../components/Spinner/LoadingSpinner'
 
 const ManageCategory = () => {
     const [isOpen, setIsOpen] = useState(false)
@@ -16,7 +17,7 @@ const ManageCategory = () => {
     const { register, handleSubmit, reset, setValue } = useForm()
     const axiosSecure = useAxiosSecure()
 
-    const { data: categories = [], refetch } = useQuery({
+    const { data: categories = [], refetch, isLoading } = useQuery({
         queryKey: ['categories'],
         queryFn: async () => {
             const res = await axiosSecure.get('/categories')
@@ -130,7 +131,16 @@ const ManageCategory = () => {
                 />
             </div>
 
-            <CustomTable data={categories} columns={columns} />
+            {isLoading ? (
+                <LoadingSpinner />
+            ) : categories.length === 0 ? (
+                <p className='text-gray-500 font-medium text-center mt-6'>
+                    No Categories found.
+                </p>
+            ) : (
+                <CustomTable data={categories} columns={columns} />
+            )}
+
 
             {/* Add/Edit Category Modal */}
             <Transition show={isOpen} as={Fragment}>
