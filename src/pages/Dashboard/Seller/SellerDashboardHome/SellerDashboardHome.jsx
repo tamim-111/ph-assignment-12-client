@@ -14,7 +14,7 @@ const SellerDashboardHome = () => {
         queryKey: ['seller-payments', user?.email],
         enabled: !loading && !!user?.email,
         queryFn: async () => {
-            const res = await axiosSecure.get('/payments')
+            const res = await axiosSecure.get(`/payments?email=${user.email}`)
             return res.data
         }
     })
