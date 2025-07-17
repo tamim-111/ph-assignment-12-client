@@ -7,8 +7,10 @@ import { useQuery } from '@tanstack/react-query'
 import useAxiosSecure from '../../hooks/useAxiosSecure' // assumes you created this
 import toast from 'react-hot-toast'
 import LoadingSpinner from '../../components/Spinner/LoadingSpinner'
+import useAuth from '../../hooks/useAuth'
 
 const Shop = () => {
+    const { user } = useAuth()
     const [selectedMedicine, setSelectedMedicine] = useState(null)
     const [isModalOpen, setIsModalOpen] = useState(false)
     const [addedToCartIds, setAddedToCartIds] = useState([])
@@ -31,6 +33,7 @@ const Shop = () => {
         const cartItem = {
             ...medicine,
             medicineId: medicine._id,
+            userEmail: user?.email,
             quantity: 0,
             subtotal: 0,
         }
