@@ -11,8 +11,9 @@ import {
 import Button from '../../components/Button/Button'
 import { useQuery } from '@tanstack/react-query'
 import useAxiosSecure from '../../hooks/useAxiosSecure'
+import useAuth from '../../hooks/useAuth' // ✅ for filtering by logged-in user
 
-// Styles for PDF document
+// PDF Styles
 const styles = StyleSheet.create({
     page: {
         padding: 30,
@@ -59,7 +60,7 @@ const styles = StyleSheet.create({
     },
 })
 
-// PDF Document component
+// PDF Document Component
 const InvoiceDocument = ({ payment }) => (
     <Document>
         <Page size="A4" style={styles.page}>
@@ -75,12 +76,10 @@ const InvoiceDocument = ({ payment }) => (
 
             <View style={styles.section}>
                 <Text>
-                    <Text style={{ fontWeight: 'bold' }}>Customer:</Text>{' '}
-                    {payment.userName}
+                    <Text style={{ fontWeight: 'bold' }}>Customer:</Text> {payment.userName}
                 </Text>
                 <Text>
-                    <Text style={{ fontWeight: 'bold' }}>Email:</Text>{' '}
-                    {payment.userEmail}
+                    <Text style={{ fontWeight: 'bold' }}>Email:</Text> {payment.userEmail}
                 </Text>
                 <Text>
                     <Text style={{ fontWeight: 'bold' }}>Date & Time:</Text>{' '}
@@ -100,20 +99,14 @@ const InvoiceDocument = ({ payment }) => (
                         <Text style={styles.tableCell}>{item.name}</Text>
                         <Text style={styles.tableCell}>{item.company}</Text>
                         <Text style={styles.tableCell}>{item.quantity}</Text>
-                        <Text style={styles.tableCell}>TK {item.subtotal}</Text>
+                        <Text style={styles.tableCell}>৳{item.subtotal}</Text>
                     </View>
                 ))}
             </View>
 
             <View style={{ marginTop: 20 }}>
-                <Text
-                    style={{
-                        textAlign: 'right',
-                        fontSize: 14,
-                        fontWeight: 'bold',
-                    }}
-                >
-                    Grand Total: TK {payment.amount}
+                <Text style={{ textAlign: 'right', fontSize: 14, fontWeight: 'bold' }}>
+                    Grand Total: ৳{payment.amount}
                 </Text>
             </View>
         </Page>
@@ -122,6 +115,7 @@ const InvoiceDocument = ({ payment }) => (
 
 const Invoice = () => {
     const axiosSecure = useAxiosSecure()
+    const { user } = useAuth()
 
     const { data: payments = [], isLoading } = useQuery({
         queryKey: ['payments'],
@@ -133,10 +127,14 @@ const Invoice = () => {
 
     if (isLoading) return <p className="text-center py-10">Loading...</p>
 
-    const payment = payments[0] // Latest payment
+    // ✅ Filter only current user's payments
+    const userPayments = payments
+        .filter(p => p.userEmail === user?.email)
+        .sort((a, b) => new Date(b.date) - new Date(a.date)) // Latest first
 
-    if (!payment)
-        return <p className="text-center py-10">No payment data available.</p>
+    const payment = userPayments[0] // ✅ Latest payment of current user
+
+    if (!payment) return <p className="text-center py-10">No payment found.</p>
 
     return (
         <div className="min-h-screen bg-gray-100 flex items-center justify-center py-10 px-4">
@@ -147,26 +145,15 @@ const Invoice = () => {
                         <h2 className="text-xl font-bold text-[#25A8D6]">MedEasy</h2>
                     </div>
                     <div className="text-sm text-gray-500 text-right">
-                        <p>
-                            <strong>Invoice ID:</strong> {payment._id}
-                        </p>
-                        <p>
-                            <strong>Transaction ID:</strong> {payment.transactionId}
-                        </p>
+                        <p><strong>Invoice ID:</strong> {payment._id}</p>
+                        <p><strong>Transaction ID:</strong> {payment.transactionId}</p>
                     </div>
                 </div>
 
                 <div className="mb-6">
-                    <p>
-                        <span className="font-medium">Customer:</span> {payment.userName}
-                    </p>
-                    <p>
-                        <span className="font-medium">Email:</span> {payment.userEmail}
-                    </p>
-                    <p>
-                        <span className="font-medium">Date & Time:</span>{' '}
-                        {new Date(payment.date).toLocaleString()}
-                    </p>
+                    <p><span className="font-medium">Customer:</span> {payment.userName}</p>
+                    <p><span className="font-medium">Email:</span> {payment.userEmail}</p>
+                    <p><span className="font-medium">Date & Time:</span> {new Date(payment.date).toLocaleString()}</p>
                 </div>
 
                 <table className="w-full table-auto border">
@@ -192,8 +179,7 @@ const Invoice = () => {
 
                 <div className="mt-6 text-right">
                     <p className="text-lg font-semibold">
-                        Grand Total:{' '}
-                        <span className="text-[#25A8D6]">৳{payment.amount}</span>
+                        Grand Total: <span className="text-[#25A8D6]">৳{payment.amount}</span>
                     </p>
                 </div>
 
