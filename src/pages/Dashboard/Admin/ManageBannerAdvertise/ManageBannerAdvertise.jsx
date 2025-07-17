@@ -19,24 +19,20 @@ const ManageBannerAdvertise = () => {
     })
 
     // ✅ Toggle advertised status
-    const { mutateAsync: markAdvertised } = useMutation({
-        mutationFn: async (id) => {
-            const res = await axiosSecure.patch(`/medicines/advertise/${id}`)
+    const { mutateAsync: toggleAdvertisedStatus } = useMutation({
+        mutationFn: async ({ id, advertised }) => {
+            const res = await axiosSecure.patch(`/medicines/advertise/${id}`, { advertised })
             return res.data
         },
         onSuccess: () => {
-            toast.success('Medicine added to homepage slider')
+            toast.success('Advertise status updated')
             queryClient.invalidateQueries(['requested-medicines'])
         },
         onError: () => toast.error('Failed to update advertised status'),
     })
 
     const toggleAdStatus = async (ad) => {
-        if (ad.advertised) {
-            toast('Already advertised.')
-            return
-        }
-        await markAdvertised(ad._id)
+        await toggleAdvertisedStatus({ id: ad._id, advertised: !ad.advertised })
     }
 
     const columns = [
