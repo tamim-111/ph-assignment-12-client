@@ -22,6 +22,9 @@ import UpdateProfile from '../pages/Auth/UpdateProfile/UpdateProfile'
 import Checkout from '../pages/Checkout/Checkout'
 import Invoice from '../pages/Invoice/Invoice'
 import PrivateRoute from './PrivateRoute'
+import AdminRoute from './AdminRoute'
+import SellerRoute from './SellerRoute'
+import CustomerRoute from './CustomerRoute'
 
 export const router = createBrowserRouter([
     {
@@ -78,41 +81,41 @@ export const router = createBrowserRouter([
             // customer Dashboard
             {
                 path: 'customer/payment-history',
-                element: <PrivateRoute><PaymentHistory /></PrivateRoute>
+                element: <PrivateRoute><CustomerRoute><PaymentHistory /></CustomerRoute></PrivateRoute>
             },
             // admin Dashboard
             {
                 path: 'admin/manage-users',
-                element: <PrivateRoute><ManageUsers /></PrivateRoute>
+                element: <PrivateRoute><AdminRoute><ManageUsers /></AdminRoute></PrivateRoute>
             },
             {
                 path: 'admin/manage-category',
-                element: <PrivateRoute><ManageCategory /></PrivateRoute>
+                element: <PrivateRoute><AdminRoute><ManageCategory /></AdminRoute></PrivateRoute>
             },
             {
                 path: 'admin/payment-management',
-                element: <PrivateRoute><PaymentManagement /></PrivateRoute>
+                element: <PrivateRoute><AdminRoute><PaymentManagement /></AdminRoute></PrivateRoute>
             },
             {
                 path: 'admin/sales-report',
-                element: <PrivateRoute><SalesReport /></PrivateRoute>
+                element: <PrivateRoute><AdminRoute><SalesReport /></AdminRoute></PrivateRoute>
             },
             {
                 path: 'admin/manage-banner-advertise',
-                element: <PrivateRoute><ManageBannerAdvertise /></PrivateRoute>
+                element: <PrivateRoute><AdminRoute><ManageBannerAdvertise /></AdminRoute></PrivateRoute>
             },
             // seller dashboard
             {
                 path: 'seller/manage-medicines',
-                element: <PrivateRoute><ManageMedicines /></PrivateRoute>
+                element: <PrivateRoute><SellerRoute><ManageMedicines /></SellerRoute></PrivateRoute>
             },
             {
                 path: 'seller/purchase-history',
-                element: <PrivateRoute><PurchaseHistory /></PrivateRoute>
+                element: <PrivateRoute><SellerRoute><PurchaseHistory /></SellerRoute></PrivateRoute>
             },
             {
                 path: 'seller/ask-for-advertisement',
-                element: <PrivateRoute><AskForAdvertisement /></PrivateRoute>
+                element: <PrivateRoute><SellerRoute><AskForAdvertisement /></SellerRoute></PrivateRoute>
             },
         ],
     },
