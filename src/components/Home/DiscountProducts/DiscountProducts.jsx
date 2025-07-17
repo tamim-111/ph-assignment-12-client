@@ -9,8 +9,10 @@ import { useQuery } from '@tanstack/react-query'
 import useAxiosSecure from '../../../hooks/useAxiosSecure'
 import toast from 'react-hot-toast'
 import LoadingSpinner from '../../Spinner/LoadingSpinner'
+import useAuth from '../../../hooks/useAuth'
 
 const DiscountProducts = () => {
+    const { user } = useAuth()
     const [addedToCartIds, setAddedToCartIds] = useState([])
     const axiosSecure = useAxiosSecure()
 
@@ -27,6 +29,7 @@ const DiscountProducts = () => {
         const cartItem = {
             ...medicine,
             medicineId: medicine._id,
+            userEmail: user?.email,
             quantity: 0,
             subtotal: 0,
         }
