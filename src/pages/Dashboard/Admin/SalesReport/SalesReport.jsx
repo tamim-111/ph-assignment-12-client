@@ -3,75 +3,75 @@ import * as XLSX from 'xlsx'
 import { saveAs } from 'file-saver'
 import Button from '../../../../components/Button/Button'
 import CustomTable from '../../../../components/CustomTable/CustomTable'
+import useAxiosSecure from '../../../../hooks/useAxiosSecure'
+import { useQuery } from '@tanstack/react-query'
 
 const SalesReport = () => {
     const [startDate, setStartDate] = useState('')
     const [endDate, setEndDate] = useState('')
+    const axiosSecure = useAxiosSecure()
 
-    const [salesData] = useState([
-        {
-            id: '1',
-            date: '2025-07-10',
-            medicine: 'Napa 500mg',
-            seller: 'seller1@example.com',
-            buyer: 'buyer1@example.com',
-            totalPrice: 200,
-        },
-        {
-            id: '2',
-            date: '2025-07-12',
-            medicine: 'Seclo 20mg',
-            seller: 'seller2@example.com',
-            buyer: 'buyer2@example.com',
-            totalPrice: 350,
-        },
-        {
-            id: '3',
-            date: '2025-07-05',
-            medicine: 'Maxpro 40mg',
-            seller: 'seller1@example.com',
-            buyer: 'buyer3@example.com',
-            totalPrice: 120,
-        },
-    ])
+    const { data: payments = [], isLoading } = useQuery({
+        queryKey: ['sales-report'],
+        queryFn: async () => {
+            const res = await axiosSecure.get('/payments')
+            return res.data
+        }
+    })
 
-    const filteredSales = salesData.filter(sale => {
+    // Filter payments by date range
+    const filteredSales = payments.filter(sale => {
         if (!startDate && !endDate) return true
         const saleDate = new Date(sale.date)
         const start = startDate ? new Date(startDate) : null
         const end = endDate ? new Date(endDate) : null
-
         return (!start || saleDate >= start) && (!end || saleDate <= end)
     })
 
+    // Handle Excel download
     const handleDownload = () => {
         const dataToExport = filteredSales.map(sale => ({
-            Date: sale.date,
-            'Medicine Name': sale.medicine,
-            'Seller Email': sale.seller,
-            'Buyer Email': sale.buyer,
-            'Total Price (Tk)': sale.totalPrice,
+            Date: new Date(sale.date).toLocaleDateString(),
+            'Medicine Name(s)': sale.items.map(item => item.name).join(', '),
+            'Seller Email': sale.items[0]?.seller || 'N/A', // Only one seller per product
+            'Buyer Email': sale.userEmail,
+            'Total Price (Tk)': sale.amount.toLocaleString()
         }))
 
         const worksheet = XLSX.utils.json_to_sheet(dataToExport)
         const workbook = XLSX.utils.book_new()
         XLSX.utils.book_append_sheet(workbook, worksheet, 'SalesReport')
-
         const excelBuffer = XLSX.write(workbook, { bookType: 'xlsx', type: 'array' })
         const blob = new Blob([excelBuffer], { type: 'application/octet-stream' })
         saveAs(blob, 'sales-report.xlsx')
     }
 
     const columns = [
-        { header: 'Date', accessorKey: 'date', cell: info => info.getValue() },
-        { header: 'Medicine Name', accessorKey: 'medicine', cell: info => info.getValue() },
-        { header: 'Seller Email', accessorKey: 'seller', cell: info => info.getValue() },
-        { header: 'Buyer Email', accessorKey: 'buyer', cell: info => info.getValue() },
+        {
+            header: 'Date',
+            accessorKey: 'date',
+            cell: info => new Date(info.row.original.date).toLocaleDateString()
+        },
+        {
+            header: 'Medicine Name(s)',
+            accessorKey: 'medicine',
+            cell: info => info.row.original.items.map(item => item.name).join(', ')
+        },
+        {
+            header: 'Seller Email',
+            accessorKey: 'seller',
+            cell: info => info.row.original.items[0]?.seller || 'N/A'
+        },
+        {
+            header: 'Buyer Email',
+            accessorKey: 'buyer',
+            cell: info => info.row.original.userEmail
+        },
         {
             header: 'Total Price',
-            accessorKey: 'totalPrice',
-            cell: info => `Tk ${info.getValue()}`,
-        },
+            accessorKey: 'amount',
+            cell: info => `Tk ${info.getValue().toLocaleString()}`
+        }
     ]
 
     return (
@@ -101,8 +101,14 @@ const SalesReport = () => {
                 <Button label='Download XLSX' onClick={handleDownload} />
             </div>
 
-            {/* Report Table */}
-            <CustomTable data={filteredSales} columns={columns} />
+            {/* Data section */}
+            {isLoading ? (
+                <p className='text-center text-gray-500'>Loading payment history...</p>
+            ) : filteredSales.length === 0 ? (
+                <p className='text-center text-gray-500'>No payments found.</p>
+            ) : (
+                <CustomTable data={filteredSales} columns={columns} />
+            )}
         </div>
     )
 }
