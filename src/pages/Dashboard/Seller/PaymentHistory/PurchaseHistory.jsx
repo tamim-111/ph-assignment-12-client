@@ -2,19 +2,22 @@ import { useState } from 'react'
 import { FaCheckCircle, FaClock, FaInfoCircle } from 'react-icons/fa'
 import { useQuery } from '@tanstack/react-query'
 import useAxiosSecure from '../../../../hooks/useAxiosSecure'
-import LoadingSpinner from '../../../../components/Spinner/LoadingSpinner'
 import CustomTable from '../../../../components/CustomTable/CustomTable'
 import PaymentStatusInfoModal from '../../../../components/Modals/PaymentStatusInfoModal'
+import useAuth from '../../../../hooks/useAuth'
+import LoadingSpinner from '../../../../components/Spinner/LoadingSpinner'
 
 const PurchaseHistory = () => {
+    const { user } = useAuth()
     const [isModalOpen, setIsModalOpen] = useState(false)
     const axiosSecure = useAxiosSecure()
 
     // Fetch payments from DB
     const { data: paymentsRaw = [], isLoading } = useQuery({
-        queryKey: ['payments'],
+        queryKey: ['payments', user?.email],
+        enabled: !!user?.email,
         queryFn: async () => {
-            const res = await axiosSecure.get('/payments')
+            const res = await axiosSecure.get(`/payments?email=${user.email}`)
             return res.data
         },
     })
@@ -86,7 +89,7 @@ const PurchaseHistory = () => {
         <div className='p-4 md:p-6'>
             <h2 className='text-2xl font-bold text-[#25A8D6] mb-4'>Payment History</h2>
             {isLoading ? (
-                <p className='text-center text-gray-500'>Loading payment history...</p>
+                <LoadingSpinner></LoadingSpinner>
             ) : payments.length === 0 ? (
                 <p className='text-center text-gray-500'>No payments found.</p>
             ) : (
