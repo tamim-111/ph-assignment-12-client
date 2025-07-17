@@ -7,19 +7,21 @@ import CustomTable from '../../components/CustomTable/CustomTable'
 import Container from '../../components/container/Container'
 import useAxiosSecure from '../../hooks/useAxiosSecure'
 import toast from 'react-hot-toast'
+import useAuth from '../../hooks/useAuth'
 
 const Cart = () => {
+    const { user } = useAuth()
     const axiosSecure = useAxiosSecure()
     const queryClient = useQueryClient()
     const navigate = useNavigate()
 
     // Load cart data
     const { data: cartItems = [], isLoading } = useQuery({
-        queryKey: ['cartItems'],
+        queryKey: ['cartItems', user?.email],
         queryFn: async () => {
-            const res = await axiosSecure.get('/carts')
+            const res = await axiosSecure.get(`/carts?email=${user?.email}`)
             return res.data
-        }
+        },
     })
 
     // Update quantity
