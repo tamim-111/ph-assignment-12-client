@@ -3,6 +3,7 @@ import Container from '../../container/Container'
 import CategoryCard from './CategoryCard'
 import useAxiosSecure from '../../../hooks/useAxiosSecure'
 import { useQuery } from '@tanstack/react-query'
+import LoadingSpinner from '../../Spinner/LoadingSpinner'
 
 const Category = () => {
     const axiosSecure = useAxiosSecure()
@@ -25,7 +26,7 @@ const Category = () => {
         },
     })
 
-    if (loading1 || loading2) return <p className="text-center mt-10">Loading categories...</p>
+    if (loading1 || loading2) return <LoadingSpinner></LoadingSpinner>
 
     // Match and count medicines per category
     const categoryWithCounts = categories.map((cat) => {
