@@ -12,7 +12,7 @@ import LoadingSpinner from '../../../components/Spinner/LoadingSpinner'
 const SignUp = () => {
     const { createUser, updateUserProfile, signInWithGoogle, setUser, loading } = useAuth()
     const navigate = useNavigate()
-    const { register, handleSubmit } = useForm()
+    const { register, handleSubmit, reset } = useForm()
     const auth = getAuth()
 
     if (loading) return <LoadingSpinner />
@@ -35,6 +35,7 @@ const SignUp = () => {
             })
 
             toast.success('Signup Successful')
+            reset()
             navigate('/')
         } catch (err) {
             console.log(err)
