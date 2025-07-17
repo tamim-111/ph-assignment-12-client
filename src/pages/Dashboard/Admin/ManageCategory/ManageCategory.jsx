@@ -15,6 +15,7 @@ const ManageCategory = () => {
     const [isEditMode, setIsEditMode] = useState(false)
     const [editId, setEditId] = useState(null)
     const { register, handleSubmit, reset, setValue } = useForm()
+    const [selectedCategory, setSelectedCategory] = useState(null)
     const axiosSecure = useAxiosSecure()
 
     const { data: categories = [], refetch, isLoading } = useQuery({
@@ -27,8 +28,16 @@ const ManageCategory = () => {
 
     const onSubmit = async (data) => {
         try {
-            const imageFile = data.image[0]
-            const imageUrl = imageFile ? await imageUpload(imageFile) : data.image
+            let imageUrl = ''
+
+            const imageInput = data.image
+
+            // Check if new file is uploaded
+            if (imageInput && imageInput[0] instanceof File) {
+                imageUrl = await imageUpload(imageInput[0]) // ✅ Upload new image
+            } else if (isEditMode) {
+                imageUrl = selectedCategory.image // ✅ Keep old image
+            }
 
             const categoryData = {
                 name: data.name,
@@ -49,6 +58,7 @@ const ManageCategory = () => {
             setIsEditMode(false)
             setEditId(null)
         } catch (err) {
+            console.error(err)
             toast.error('Failed to save category')
         }
     }
@@ -64,10 +74,13 @@ const ManageCategory = () => {
     }
 
     const handleUpdate = (category) => {
-        setValue('name', category.name)
-        setValue('image', category.image)
         setEditId(category._id)
         setIsEditMode(true)
+        setSelectedCategory(category)
+        reset({
+            name: category.name,
+            image: '',
+        })
         setIsOpen(true)
     }
 
@@ -164,11 +177,10 @@ const ManageCategory = () => {
                                 <div>
                                     <label className='text-sm text-gray-700'>Upload Image</label>
                                     <input
+                                        type='file'
                                         {...register('image')}
-                                        type={isEditMode ? 'text' : 'file'}
                                         accept='image/*'
-                                        className='file-input file-input-bordered w-full'
-                                        required={!isEditMode}
+                                        className=' file:bg-[#6BDCF6] file:text-white file:px-4 file:py-2 file:rounded-md file:font-semibold hover:file:bg-[#25A8D6]  w-full max-w-sm'
                                     />
                                 </div>
                                 <div className='text-right'>
