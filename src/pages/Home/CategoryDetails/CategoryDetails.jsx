@@ -8,8 +8,10 @@ import useAxiosSecure from '../../../hooks/useAxiosSecure'
 import toast from 'react-hot-toast'
 import LoadingSpinner from '../../../components/Spinner/LoadingSpinner'
 import Container from '../../../components/container/Container'
+import useAuth from '../../../hooks/useAuth'
 
 const CategoryDetails = () => {
+    const { user } = useAuth()
     const { id } = useParams()
     const axiosSecure = useAxiosSecure()
 
@@ -34,6 +36,7 @@ const CategoryDetails = () => {
         const cartItem = {
             ...medicine,
             medicineId: medicine._id,
+            userEmail: user?.email,
             quantity: 0,
             subtotal: 0,
         }
