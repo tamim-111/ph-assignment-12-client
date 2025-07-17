@@ -8,6 +8,7 @@ import Button from '../../Button/Button'
 import { useQuery } from '@tanstack/react-query'
 import useAxiosSecure from '../../../hooks/useAxiosSecure'
 import toast from 'react-hot-toast'
+import LoadingSpinner from '../../Spinner/LoadingSpinner'
 
 const DiscountProducts = () => {
     const [addedToCartIds, setAddedToCartIds] = useState([])
@@ -48,7 +49,7 @@ const DiscountProducts = () => {
                 <h2 className='text-3xl font-bold text-center mb-6 text-[#25A8D6]'>Discounted Medicines</h2>
 
                 {isLoading ? (
-                    <p className='text-center text-gray-500'>Loading...</p>
+                    <LoadingSpinner></LoadingSpinner>
                 ) : (
                     <Swiper
                         spaceBetween={16}
