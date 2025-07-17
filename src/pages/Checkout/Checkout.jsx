@@ -23,7 +23,7 @@ const Checkout = () => {
         queryKey: ['cartItems', user?.email],
         enabled: !!user?.email,
         queryFn: async () => {
-            const res = await axiosSecure.get(`/carts/${user.email}`)
+            const res = await axiosSecure.get(`/carts?email=${user.email}`)
             return res.data
         },
     })
