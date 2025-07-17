@@ -21,11 +21,12 @@ const ManageMedicines = () => {
 
     // GET all medicines
     const { data: medicines = [], isLoading } = useQuery({
-        queryKey: ['medicines'],
+        queryKey: ['medicines', user?.email],
         queryFn: async () => {
-            const res = await axiosSecure.get('/medicines')
+            const res = await axiosSecure.get(`/medicines?seller=${user?.email}`)
             return res.data
-        }
+        },
+        enabled: !!user?.email // Wait for auth to load
     })
 
     // GET categories from DB
