@@ -8,13 +8,14 @@ import {
     flexRender,
 } from '@tanstack/react-table'
 
-const CustomTable = ({ columns, data }) => {
+const CustomTable = ({ columns, data, showPriceSort = false }) => {
     const [sorting, setSorting] = useState([])
     const [globalFilter, setGlobalFilter] = useState('')
     const [priceSort, setPriceSort] = useState('default')
 
     // Handle price sorting changes
     useEffect(() => {
+        if (!showPriceSort) return
         if (priceSort === 'asc') {
             setSorting([{ id: 'price', desc: false }])
         } else if (priceSort === 'desc') {
@@ -22,7 +23,7 @@ const CustomTable = ({ columns, data }) => {
         } else {
             setSorting([])
         }
-    }, [priceSort])
+    }, [priceSort, showPriceSort])
 
     const table = useReactTable({
         data,
@@ -54,15 +55,17 @@ const CustomTable = ({ columns, data }) => {
                     className='input input-bordered w-full max-w-sm'
                 />
 
-                <select
-                    value={priceSort}
-                    onChange={e => setPriceSort(e.target.value)}
-                    className='select select-sm w-48'
-                >
-                    <option value='default'>Sort by Price</option>
-                    <option value='asc'>Price: Low to High</option>
-                    <option value='desc'>Price: High to Low</option>
-                </select>
+                {showPriceSort && (
+                    <select
+                        value={priceSort}
+                        onChange={e => setPriceSort(e.target.value)}
+                        className='select select-sm w-48'
+                    >
+                        <option value='default'>Sort by Price</option>
+                        <option value='asc'>Price: Low to High</option>
+                        <option value='desc'>Price: High to Low</option>
+                    </select>
+                )}
             </div>
 
             {/* 📋 Table */}
