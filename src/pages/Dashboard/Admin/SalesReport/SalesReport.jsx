@@ -21,6 +21,7 @@ const SalesReport = () => {
 
     // Filter payments by date range
     const filteredSales = payments.filter(sale => {
+        if (sale.status !== 'paid') return false
         if (!startDate && !endDate) return true
         const saleDate = new Date(sale.date)
         const start = startDate ? new Date(startDate) : null
