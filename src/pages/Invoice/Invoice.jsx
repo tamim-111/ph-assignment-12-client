@@ -11,7 +11,7 @@ import {
 import Button from '../../components/Button/Button'
 import { useQuery } from '@tanstack/react-query'
 import useAxiosSecure from '../../hooks/useAxiosSecure'
-import useAuth from '../../hooks/useAuth' // ✅ for filtering by logged-in user
+import useAuth from '../../hooks/useAuth'
 import { Helmet } from 'react-helmet'
 
 // PDF Styles
@@ -100,14 +100,14 @@ const InvoiceDocument = ({ payment }) => (
                         <Text style={styles.tableCell}>{item.name}</Text>
                         <Text style={styles.tableCell}>{item.company}</Text>
                         <Text style={styles.tableCell}>{item.quantity}</Text>
-                        <Text style={styles.tableCell}>৳{item.subtotal}</Text>
+                        <Text style={styles.tableCell}>{item.subtotal}</Text>
                     </View>
                 ))}
             </View>
 
             <View style={{ marginTop: 20 }}>
                 <Text style={{ textAlign: 'right', fontSize: 14, fontWeight: 'bold' }}>
-                    Grand Total: ৳{payment.amount}
+                    Grand Total: {payment.amount}
                 </Text>
             </View>
         </Page>
@@ -129,13 +129,12 @@ const Invoice = () => {
 
     if (isLoading) return <p className="text-center py-10">Loading...</p>
 
-    // ✅ Filter only current user's payments
+    //  Filter only current user's payments
     const userPayments = payments
         .filter(p => p.userEmail === user?.email)
         .sort((a, b) => new Date(b.date) - new Date(a.date)) // Latest first
 
-    const payment = userPayments[0] // ✅ Latest payment of current user
-
+    const payment = userPayments[0]
     if (!payment) return <p className="text-center py-10">No payment found.</p>
 
     return (
@@ -175,7 +174,7 @@ const Invoice = () => {
                                     <td className="py-2 px-4">{item.name}</td>
                                     <td className="py-2 px-4">{item.company}</td>
                                     <td className="py-2 px-4">{item.quantity}</td>
-                                    <td className="py-2 px-4">৳{item.subtotal}</td>
+                                    <td className="py-2 px-4">{item.subtotal}</td>
                                 </tr>
                             ))}
                         </tbody>
@@ -183,7 +182,7 @@ const Invoice = () => {
 
                     <div className="mt-6 text-right">
                         <p className="text-lg font-semibold">
-                            Grand Total: <span className="text-[#25A8D6]">৳{payment.amount}</span>
+                            Grand Total: <span className="text-[#25A8D6]">{payment.amount}</span>
                         </p>
                     </div>
 
