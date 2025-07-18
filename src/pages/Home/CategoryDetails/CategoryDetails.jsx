@@ -90,7 +90,7 @@ const CategoryDetails = () => {
                 ) : medicines.length === 0 ? (
                     <p className='text-gray-500 text-center mt-10'>No medicines found in this category.</p>
                 ) : (
-                    <CustomTable data={medicines} columns={columns} />
+                    <CustomTable data={medicines} columns={columns} showPriceSort={true} />
                 )}
 
                 {/* Modal */}

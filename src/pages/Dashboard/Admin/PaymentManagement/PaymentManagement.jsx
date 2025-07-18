@@ -107,7 +107,7 @@ const PaymentManagement = () => {
                     No payments found.
                 </p>
             ) : (
-                <CustomTable data={payments} columns={columns} />
+                <CustomTable data={payments} columns={columns} showPriceSort={true} />
             )}
         </div>
     )

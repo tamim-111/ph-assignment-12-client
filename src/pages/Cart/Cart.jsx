@@ -151,7 +151,7 @@ const Cart = () => {
                     <p className='text-center'>Loading...</p>
                 ) : cartItems.length > 0 ? (
                     <>
-                        <CustomTable columns={columns} data={cartItems} />
+                        <CustomTable columns={columns} data={cartItems} showPriceSort={true} />
 
                         <div className='mt-6 flex flex-col md:flex-row justify-between items-center gap-4'>
                             <div className='flex gap-2'>

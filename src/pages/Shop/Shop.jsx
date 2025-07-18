@@ -90,7 +90,7 @@ const Shop = () => {
                         No medicines found. Click "Add Medicine" to create your first entry.
                     </p>
                 ) : (
-                    <CustomTable data={medicines} columns={columns} />
+                    <CustomTable data={medicines} columns={columns} showPriceSort={true} />
                 )}
 
                 {/* Modal */}

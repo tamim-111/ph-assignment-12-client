@@ -93,7 +93,7 @@ const PurchaseHistory = () => {
             ) : payments.length === 0 ? (
                 <p className='text-center text-gray-500'>No payments found.</p>
             ) : (
-                <CustomTable data={payments} columns={columns} />
+                <CustomTable data={payments} columns={columns} showPriceSort={true} />
             )}
             <PaymentStatusInfoModal isOpen={isModalOpen} setIsOpen={setIsModalOpen} />
         </div>

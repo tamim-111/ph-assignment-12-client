@@ -108,7 +108,7 @@ const SalesReport = () => {
             ) : filteredSales.length === 0 ? (
                 <p className='text-center text-gray-500'>No payments found.</p>
             ) : (
-                <CustomTable data={filteredSales} columns={columns} />
+                <CustomTable data={filteredSales} columns={columns} showPriceSort={true} />
             )}
         </div>
     )
