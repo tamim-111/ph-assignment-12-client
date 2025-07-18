@@ -38,11 +38,11 @@ export const router = createBrowserRouter([
             },
             {
                 path: '/categoryDetails/:id',
-                element: <PrivateRoute><CategoryDetails /></PrivateRoute>,
+                element: <CategoryDetails />,
             },
             {
                 path: '/shop',
-                element: <PrivateRoute><Shop /></PrivateRoute>
+                element: <Shop />
             },
             {
                 path: '/cart',
