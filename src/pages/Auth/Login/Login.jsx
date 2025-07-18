@@ -7,19 +7,21 @@ import useAuth from '../../../hooks/useAuth'
 import LoadingSpinner from '../../../components/Spinner/LoadingSpinner'
 import { saveUserInDb } from '../../../api/utils'
 import { Helmet } from 'react-helmet'
+import { useState } from 'react'
 
 const Login = () => {
-    const { signIn, signInWithGoogle, loading, user } = useAuth()
+    const { signIn, signInWithGoogle, user } = useAuth()
     const navigate = useNavigate()
     const location = useLocation()
+    const [loading, setLoading] = useState(false)
     const from = location?.state?.from?.pathname || '/'
 
     // If already logged in, redirect to previous page or homepage
     if (user) return <Navigate to={from} replace={true} />
-    if (loading) return <LoadingSpinner />
 
     const handleSubmit = async event => {
         event.preventDefault()
+        setLoading(true)
         const form = event.target
         const email = form.email.value
         const password = form.password.value
@@ -31,10 +33,13 @@ const Login = () => {
         } catch (err) {
             console.log(err)
             toast.error(err?.message)
+        } finally {
+            setLoading(false)
         }
     }
 
     const handleGoogleSignIn = async () => {
+        setLoading(true)
         try {
             const result = await signInWithGoogle()
             const user = result.user
@@ -49,6 +54,8 @@ const Login = () => {
         } catch (err) {
             console.log(err)
             toast.error(err?.message)
+        } finally {
+            setLoading(false)
         }
     }
 
