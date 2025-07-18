@@ -3,6 +3,8 @@
 
 ## Website Overview
 
+<img alt="image" src="../client/src/assets/images/website-screen-shot.png" />
+
 MedEasy is a full-stack pharmacy e-commerce platform designed for customers, sellers, and admins. It provides smooth product browsing, secure authentication, cart and checkout functionality with Stripe payment integration, and comprehensive dashboards for admin and sellers to manage products, users, payments, and advertisements.
 
 ---
@@ -19,7 +21,13 @@ MedEasy is a full-stack pharmacy e-commerce platform designed for customers, sel
 
 ## Live Site
 
-🔗 [Live Site URL](https://your-live-site-url.com)
+🔗 [https://assignment-12-a7eae.web.app/](https://assignment-12-a7eae.web.app/)
+
+---
+## GitHub Repositories
+
+- Client Side: [https://github.com/tamim-111/ph-assignment-12-client](https://github.com/tamim-111/ph-assignment-12-client)
+- Server Side: [https://github.com/tamim-111/ph-assignment-12-server](https://github.com/tamim-111/ph-assignment-12-server)
 
 ---
 
@@ -124,13 +132,6 @@ MedEasy is a full-stack pharmacy e-commerce platform designed for customers, sel
 3. Run `npm install` in both client and server directories.
 4. Start server: `nodemon index.js`.
 5. Start client: `npm run dev`.
-
----
-
-## GitHub Repositories
-
-- Client Side: [https://github.com/yourusername/medeasy-client](https://github.com/yourusername/medeasy-client)
-- Server Side: [https://github.com/yourusername/medeasy-server](https://github.com/yourusername/medeasy-server)
 
 ---
 
