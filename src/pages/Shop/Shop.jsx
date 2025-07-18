@@ -8,6 +8,7 @@ import useAxiosSecure from '../../hooks/useAxiosSecure' // assumes you created t
 import toast from 'react-hot-toast'
 import LoadingSpinner from '../../components/Spinner/LoadingSpinner'
 import useAuth from '../../hooks/useAuth'
+import { Helmet } from 'react-helmet'
 
 const Shop = () => {
     const { user } = useAuth()
@@ -78,6 +79,7 @@ const Shop = () => {
 
     return (
         <Container>
+            <Helmet><title>MedEasy | Shop</title></Helmet>
             <section className='my-10 px-4'>
                 <h2 className='text-3xl font-bold text-center mb-6 text-[#25A8D6]'>
                     All Medicines

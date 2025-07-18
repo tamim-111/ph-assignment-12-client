@@ -8,6 +8,7 @@ import Container from '../../components/container/Container'
 import useAxiosSecure from '../../hooks/useAxiosSecure'
 import toast from 'react-hot-toast'
 import useAuth from '../../hooks/useAuth'
+import { Helmet } from 'react-helmet'
 
 const Cart = () => {
     const { user } = useAuth()
@@ -144,6 +145,7 @@ const Cart = () => {
 
     return (
         <Container>
+            <Helmet><title>MedEasy | Cart</title></Helmet>
             <div className='max-w-6xl mx-auto px-4 my-10'>
                 <h2 className='text-3xl font-bold text-[#25A8D6] mb-6 text-center'>Your Cart</h2>
 

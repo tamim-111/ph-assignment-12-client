@@ -8,6 +8,7 @@ import CustomTable from '../../../../components/CustomTable/CustomTable'
 import useAxiosSecure from '../../../../hooks/useAxiosSecure'
 import useAuth from '../../../../hooks/useAuth'
 import LoadingSpinner from '../../../../components/Spinner/LoadingSpinner'
+import { Helmet } from 'react-helmet'
 
 const AskForAdvertisement = () => {
     const { user } = useAuth()
@@ -99,62 +100,65 @@ const AskForAdvertisement = () => {
     ]
 
     return (
-        <div className='p-4 md:p-6'>
-            <h2 className='text-2xl font-bold text-[#25A8D6] mb-4'>Ask For Advertisement</h2>
+        <>
+            <Helmet><title>MedEasy | DashBoard | AskForAdvertisement</title></Helmet>
+            <div className='p-4 md:p-6'>
+                <h2 className='text-2xl font-bold text-[#25A8D6] mb-4'>Ask For Advertisement</h2>
 
-            {isLoading ? (
-                <LoadingSpinner />
-            ) : medicines.length === 0 ? (
-                <p className='text-gray-500 font-medium text-center mt-6'>
-                    No ads found.
-                </p>
-            ) : (
-                <CustomTable data={medicines} columns={columns} />
-            )}
+                {isLoading ? (
+                    <LoadingSpinner />
+                ) : medicines.length === 0 ? (
+                    <p className='text-gray-500 font-medium text-center mt-6'>
+                        No ads found.
+                    </p>
+                ) : (
+                    <CustomTable data={medicines} columns={columns} />
+                )}
 
-            {/* Modal */}
-            <Transition show={isOpen} as={Fragment}>
-                <Dialog as='div' className='relative z-50' onClose={() => setIsOpen(false)}>
-                    <div className='fixed inset-0 bg-black/30 backdrop-blur-sm' />
-                    <div className='fixed inset-0 flex items-center justify-center p-4'>
-                        <DialogPanel className='w-full max-w-lg rounded-xl bg-white p-6 shadow-xl'>
-                            <DialogTitle className='text-lg font-semibold text-[#25A8D6] mb-4'>
-                                Review Advertisement Request
-                            </DialogTitle>
+                {/* Modal */}
+                <Transition show={isOpen} as={Fragment}>
+                    <Dialog as='div' className='relative z-50' onClose={() => setIsOpen(false)}>
+                        <div className='fixed inset-0 bg-black/30 backdrop-blur-sm' />
+                        <div className='fixed inset-0 flex items-center justify-center p-4'>
+                            <DialogPanel className='w-full max-w-lg rounded-xl bg-white p-6 shadow-xl'>
+                                <DialogTitle className='text-lg font-semibold text-[#25A8D6] mb-4'>
+                                    Review Advertisement Request
+                                </DialogTitle>
 
-                            {selectedMedicine && (
-                                <div className='space-y-4'>
-                                    <div>
-                                        <h4 className='text-sm text-gray-700 font-medium'>Medicine Name</h4>
-                                        <p className='text-base text-gray-800'>{selectedMedicine.name}</p>
+                                {selectedMedicine && (
+                                    <div className='space-y-4'>
+                                        <div>
+                                            <h4 className='text-sm text-gray-700 font-medium'>Medicine Name</h4>
+                                            <p className='text-base text-gray-800'>{selectedMedicine.name}</p>
+                                        </div>
+
+                                        <div>
+                                            <h4 className='text-sm text-gray-700 font-medium'>Image</h4>
+                                            <img
+                                                src={selectedMedicine.image}
+                                                alt='medicine'
+                                                className='w-32 h-32 rounded-lg border mt-1'
+                                            />
+                                        </div>
+
+                                        <div>
+                                            <h4 className='text-sm text-gray-700 font-medium'>Description</h4>
+                                            <p className='text-sm text-gray-800'>
+                                                {selectedMedicine.description || 'No description provided.'}
+                                            </p>
+                                        </div>
+
+                                        <div className='text-right'>
+                                            <Button label='Confirm Request' onClick={handleConfirm} />
+                                        </div>
                                     </div>
-
-                                    <div>
-                                        <h4 className='text-sm text-gray-700 font-medium'>Image</h4>
-                                        <img
-                                            src={selectedMedicine.image}
-                                            alt='medicine'
-                                            className='w-32 h-32 rounded-lg border mt-1'
-                                        />
-                                    </div>
-
-                                    <div>
-                                        <h4 className='text-sm text-gray-700 font-medium'>Description</h4>
-                                        <p className='text-sm text-gray-800'>
-                                            {selectedMedicine.description || 'No description provided.'}
-                                        </p>
-                                    </div>
-
-                                    <div className='text-right'>
-                                        <Button label='Confirm Request' onClick={handleConfirm} />
-                                    </div>
-                                </div>
-                            )}
-                        </DialogPanel>
-                    </div>
-                </Dialog>
-            </Transition>
-        </div>
+                                )}
+                            </DialogPanel>
+                        </div>
+                    </Dialog>
+                </Transition>
+            </div>
+        </>
     )
 }
 

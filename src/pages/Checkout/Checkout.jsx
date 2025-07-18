@@ -11,6 +11,7 @@ import { Elements } from '@stripe/react-stripe-js'
 import Container from '../../components/container/Container'
 import Button from '../../components/Button/Button'
 import CheckoutForm from '../../../src/components/Form/CheckoutForm/CheckoutForm'
+import { Helmet } from 'react-helmet'
 
 const stripePromise = loadStripe(import.meta.env.VITE_STRIPE_PK_KEY)
 
@@ -42,6 +43,7 @@ const Checkout = () => {
 
     return (
         <Container>
+            <Helmet><title>MedEasy | Checkout</title></Helmet>
             <div className='min-h-screen py-10 px-4'>
                 <div className='max-w-5xl mx-auto bg-white shadow-md rounded-lg p-8'>
                     <h2 className='text-3xl font-bold text-center mb-6 text-[#25A8D6]'>Checkout</h2>

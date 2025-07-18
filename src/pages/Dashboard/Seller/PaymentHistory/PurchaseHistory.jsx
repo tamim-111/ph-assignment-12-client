@@ -6,6 +6,7 @@ import CustomTable from '../../../../components/CustomTable/CustomTable'
 import PaymentStatusInfoModal from '../../../../components/Modals/PaymentStatusInfoModal'
 import useAuth from '../../../../hooks/useAuth'
 import LoadingSpinner from '../../../../components/Spinner/LoadingSpinner'
+import { Helmet } from 'react-helmet'
 
 const PurchaseHistory = () => {
     const { user } = useAuth()
@@ -86,17 +87,20 @@ const PurchaseHistory = () => {
     ]
 
     return (
-        <div className='p-4 md:p-6'>
-            <h2 className='text-2xl font-bold text-[#25A8D6] mb-4'>Payment History</h2>
-            {isLoading ? (
-                <LoadingSpinner></LoadingSpinner>
-            ) : payments.length === 0 ? (
-                <p className='text-center text-gray-500'>No payments found.</p>
-            ) : (
-                <CustomTable data={payments} columns={columns} showPriceSort={true} />
-            )}
-            <PaymentStatusInfoModal isOpen={isModalOpen} setIsOpen={setIsModalOpen} />
-        </div>
+        <>
+            <Helmet><title>MedEasy | DashBoard | PurchaseHistory</title></Helmet>
+            <div className='p-4 md:p-6'>
+                <h2 className='text-2xl font-bold text-[#25A8D6] mb-4'>Payment History</h2>
+                {isLoading ? (
+                    <LoadingSpinner></LoadingSpinner>
+                ) : payments.length === 0 ? (
+                    <p className='text-center text-gray-500'>No payments found.</p>
+                ) : (
+                    <CustomTable data={payments} columns={columns} showPriceSort={true} />
+                )}
+                <PaymentStatusInfoModal isOpen={isModalOpen} setIsOpen={setIsModalOpen} />
+            </div>
+        </>
     )
 }
 

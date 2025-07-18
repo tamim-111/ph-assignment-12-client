@@ -4,6 +4,7 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import toast from 'react-hot-toast'
 import useAxiosSecure from '../../../../hooks/useAxiosSecure'
 import LoadingSpinner from '../../../../components/Spinner/LoadingSpinner'
+import { Helmet } from 'react-helmet'
 
 const ManageBannerAdvertise = () => {
     const axiosSecure = useAxiosSecure()
@@ -73,21 +74,24 @@ const ManageBannerAdvertise = () => {
     ]
 
     return (
-        <div className='p-4 md:p-6'>
-            <h2 className='text-2xl font-bold text-[#25A8D6] mb-4'>
-                Manage Banner Advertise
-            </h2>
+        <>
+            <Helmet><title>MedEasy | DashBoard | ManageBannerAdvertise</title></Helmet>
+            <div className='p-4 md:p-6'>
+                <h2 className='text-2xl font-bold text-[#25A8D6] mb-4'>
+                    Manage Banner Advertise
+                </h2>
 
-            {isLoading ? (
-                <LoadingSpinner />
-            ) : ads.length === 0 ? (
-                <p className='text-gray-500 font-medium text-center mt-6'>
-                    No ads found.
-                </p>
-            ) : (
-                <CustomTable data={ads} columns={columns} />
-            )}
-        </div>
+                {isLoading ? (
+                    <LoadingSpinner />
+                ) : ads.length === 0 ? (
+                    <p className='text-gray-500 font-medium text-center mt-6'>
+                        No ads found.
+                    </p>
+                ) : (
+                    <CustomTable data={ads} columns={columns} />
+                )}
+            </div>
+        </>
     )
 }
 

@@ -5,6 +5,7 @@ import Button from '../../../../components/Button/Button'
 import CustomTable from '../../../../components/CustomTable/CustomTable'
 import useAxiosSecure from '../../../../hooks/useAxiosSecure'
 import { useQuery } from '@tanstack/react-query'
+import { Helmet } from 'react-helmet'
 
 const SalesReport = () => {
     const [startDate, setStartDate] = useState('')
@@ -76,41 +77,44 @@ const SalesReport = () => {
     ]
 
     return (
-        <div className='p-4 md:p-6 space-y-4'>
-            <h2 className='text-2xl font-bold text-[#25A8D6]'>Sales Report</h2>
+        <>
+            <Helmet><title>MedEasy | DashBoard | SalesReport</title></Helmet>
+            <div className='p-4 md:p-6 space-y-4'>
+                <h2 className='text-2xl font-bold text-[#25A8D6]'>Sales Report</h2>
 
-            {/* Filter controls */}
-            <div className='flex flex-col md:flex-row gap-4 items-center'>
-                <div className='flex items-center gap-2'>
-                    <label className='text-sm'>Start Date:</label>
-                    <input
-                        type='date'
-                        value={startDate}
-                        onChange={e => setStartDate(e.target.value)}
-                        className='input input-bordered'
-                    />
+                {/* Filter controls */}
+                <div className='flex flex-col md:flex-row gap-4 items-center'>
+                    <div className='flex items-center gap-2'>
+                        <label className='text-sm'>Start Date:</label>
+                        <input
+                            type='date'
+                            value={startDate}
+                            onChange={e => setStartDate(e.target.value)}
+                            className='input input-bordered'
+                        />
+                    </div>
+                    <div className='flex items-center gap-2'>
+                        <label className='text-sm'>End Date:</label>
+                        <input
+                            type='date'
+                            value={endDate}
+                            onChange={e => setEndDate(e.target.value)}
+                            className='input input-bordered'
+                        />
+                    </div>
+                    <Button label='Download XLSX' onClick={handleDownload} />
                 </div>
-                <div className='flex items-center gap-2'>
-                    <label className='text-sm'>End Date:</label>
-                    <input
-                        type='date'
-                        value={endDate}
-                        onChange={e => setEndDate(e.target.value)}
-                        className='input input-bordered'
-                    />
-                </div>
-                <Button label='Download XLSX' onClick={handleDownload} />
+
+                {/* Data section */}
+                {isLoading ? (
+                    <p className='text-center text-gray-500'>Loading payment history...</p>
+                ) : filteredSales.length === 0 ? (
+                    <p className='text-center text-gray-500'>No payments found.</p>
+                ) : (
+                    <CustomTable data={filteredSales} columns={columns} showPriceSort={true} />
+                )}
             </div>
-
-            {/* Data section */}
-            {isLoading ? (
-                <p className='text-center text-gray-500'>Loading payment history...</p>
-            ) : filteredSales.length === 0 ? (
-                <p className='text-center text-gray-500'>No payments found.</p>
-            ) : (
-                <CustomTable data={filteredSales} columns={columns} showPriceSort={true} />
-            )}
-        </div>
+        </>
     )
 }
 

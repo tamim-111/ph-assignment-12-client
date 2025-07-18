@@ -12,6 +12,7 @@ import Button from '../../components/Button/Button'
 import { useQuery } from '@tanstack/react-query'
 import useAxiosSecure from '../../hooks/useAxiosSecure'
 import useAuth from '../../hooks/useAuth' // ✅ for filtering by logged-in user
+import { Helmet } from 'react-helmet'
 
 // PDF Styles
 const styles = StyleSheet.create({
@@ -138,67 +139,70 @@ const Invoice = () => {
     if (!payment) return <p className="text-center py-10">No payment found.</p>
 
     return (
-        <div className="min-h-screen bg-gray-100 flex items-center justify-center py-10 px-4">
-            <div className="bg-white p-8 rounded-lg shadow max-w-3xl w-full">
-                <div className="flex justify-between items-center mb-6">
-                    <div className="flex items-center gap-2">
-                        <img src="/logo.png" alt="MedEasy" className="w-10 h-10" />
-                        <h2 className="text-xl font-bold text-[#25A8D6]">MedEasy</h2>
+        <>
+            <Helmet><title>MedEasy | Invoice</title></Helmet>
+            <div className="min-h-screen bg-gray-100 flex items-center justify-center py-10 px-4">
+                <div className="bg-white p-8 rounded-lg shadow max-w-3xl w-full">
+                    <div className="flex justify-between items-center mb-6">
+                        <div className="flex items-center gap-2">
+                            <img src="/logo.png" alt="MedEasy" className="w-10 h-10" />
+                            <h2 className="text-xl font-bold text-[#25A8D6]">MedEasy</h2>
+                        </div>
+                        <div className="text-sm text-gray-500 text-right">
+                            <p><strong>Invoice ID:</strong> {payment._id}</p>
+                            <p><strong>Transaction ID:</strong> {payment.transactionId}</p>
+                        </div>
                     </div>
-                    <div className="text-sm text-gray-500 text-right">
-                        <p><strong>Invoice ID:</strong> {payment._id}</p>
-                        <p><strong>Transaction ID:</strong> {payment.transactionId}</p>
+
+                    <div className="mb-6">
+                        <p><span className="font-medium">Customer:</span> {payment.userName}</p>
+                        <p><span className="font-medium">Email:</span> {payment.userEmail}</p>
+                        <p><span className="font-medium">Date & Time:</span> {new Date(payment.date).toLocaleString()}</p>
                     </div>
-                </div>
 
-                <div className="mb-6">
-                    <p><span className="font-medium">Customer:</span> {payment.userName}</p>
-                    <p><span className="font-medium">Email:</span> {payment.userEmail}</p>
-                    <p><span className="font-medium">Date & Time:</span> {new Date(payment.date).toLocaleString()}</p>
-                </div>
-
-                <table className="w-full table-auto border">
-                    <thead className="bg-gradient-to-r from-[#6BDCF6] to-[#25A8D6] text-white">
-                        <tr>
-                            <th className="py-2 px-4 text-left">Medicine</th>
-                            <th className="py-2 px-4 text-left">Company</th>
-                            <th className="py-2 px-4 text-left">Qty</th>
-                            <th className="py-2 px-4 text-left">Total</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {payment.items.map((item, index) => (
-                            <tr key={index} className="border-t">
-                                <td className="py-2 px-4">{item.name}</td>
-                                <td className="py-2 px-4">{item.company}</td>
-                                <td className="py-2 px-4">{item.quantity}</td>
-                                <td className="py-2 px-4">৳{item.subtotal}</td>
+                    <table className="w-full table-auto border">
+                        <thead className="bg-gradient-to-r from-[#6BDCF6] to-[#25A8D6] text-white">
+                            <tr>
+                                <th className="py-2 px-4 text-left">Medicine</th>
+                                <th className="py-2 px-4 text-left">Company</th>
+                                <th className="py-2 px-4 text-left">Qty</th>
+                                <th className="py-2 px-4 text-left">Total</th>
                             </tr>
-                        ))}
-                    </tbody>
-                </table>
+                        </thead>
+                        <tbody>
+                            {payment.items.map((item, index) => (
+                                <tr key={index} className="border-t">
+                                    <td className="py-2 px-4">{item.name}</td>
+                                    <td className="py-2 px-4">{item.company}</td>
+                                    <td className="py-2 px-4">{item.quantity}</td>
+                                    <td className="py-2 px-4">৳{item.subtotal}</td>
+                                </tr>
+                            ))}
+                        </tbody>
+                    </table>
 
-                <div className="mt-6 text-right">
-                    <p className="text-lg font-semibold">
-                        Grand Total: <span className="text-[#25A8D6]">৳{payment.amount}</span>
-                    </p>
-                </div>
+                    <div className="mt-6 text-right">
+                        <p className="text-lg font-semibold">
+                            Grand Total: <span className="text-[#25A8D6]">৳{payment.amount}</span>
+                        </p>
+                    </div>
 
-                <div className="mt-6">
-                    <PDFDownloadLink
-                        document={<InvoiceDocument payment={payment} />}
-                        fileName={`invoice-${payment._id}.pdf`}
-                    >
-                        {({ loading }) => (
-                            <Button
-                                label={loading ? 'Preparing PDF...' : 'Download Invoice PDF'}
-                                wideFull
-                            />
-                        )}
-                    </PDFDownloadLink>
+                    <div className="mt-6">
+                        <PDFDownloadLink
+                            document={<InvoiceDocument payment={payment} />}
+                            fileName={`invoice-${payment._id}.pdf`}
+                        >
+                            {({ loading }) => (
+                                <Button
+                                    label={loading ? 'Preparing PDF...' : 'Download Invoice PDF'}
+                                    wideFull
+                                />
+                            )}
+                        </PDFDownloadLink>
+                    </div>
                 </div>
             </div>
-        </div>
+        </>
     )
 }
 

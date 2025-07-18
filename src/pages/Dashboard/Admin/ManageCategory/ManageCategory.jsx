@@ -9,6 +9,7 @@ import { FaEdit, FaTrash, FaPlus } from 'react-icons/fa'
 import useAxiosSecure from '../../../../hooks/useAxiosSecure'
 import { useQuery } from '@tanstack/react-query'
 import LoadingSpinner from '../../../../components/Spinner/LoadingSpinner'
+import { Helmet } from 'react-helmet'
 
 const ManageCategory = () => {
     const [isOpen, setIsOpen] = useState(false)
@@ -127,71 +128,74 @@ const ManageCategory = () => {
     ]
 
     return (
-        <div className='p-4 md:p-6'>
-            <div className='flex justify-between items-center mb-4'>
-                <h2 className='text-2xl font-bold text-[#25A8D6]'>Manage Categories</h2>
-                <Button
-                    label={
-                        <span className='flex items-center gap-2'>
-                            <FaPlus /> Add Category
-                        </span>
-                    }
-                    onClick={() => {
-                        reset()
-                        setIsEditMode(false)
-                        setIsOpen(true)
-                    }}
-                />
+        <>
+            <Helmet><title>MedEasy | DashBoard | ManageCategory</title></Helmet>
+            <div className='p-4 md:p-6'>
+                <div className='flex justify-between items-center mb-4'>
+                    <h2 className='text-2xl font-bold text-[#25A8D6]'>Manage Categories</h2>
+                    <Button
+                        label={
+                            <span className='flex items-center gap-2'>
+                                <FaPlus /> Add Category
+                            </span>
+                        }
+                        onClick={() => {
+                            reset()
+                            setIsEditMode(false)
+                            setIsOpen(true)
+                        }}
+                    />
+                </div>
+
+                {isLoading ? (
+                    <LoadingSpinner />
+                ) : categories.length === 0 ? (
+                    <p className='text-gray-500 font-medium text-center mt-6'>
+                        No Categories found.
+                    </p>
+                ) : (
+                    <CustomTable data={categories} columns={columns} />
+                )}
+
+
+                {/* Add/Edit Category Modal */}
+                <Transition show={isOpen} as={Fragment}>
+                    <Dialog as='div' className='relative z-50' onClose={() => setIsOpen(false)}>
+                        <div className='fixed inset-0 bg-black/30 backdrop-blur-sm' />
+                        <div className='fixed inset-0 flex items-center justify-center p-4'>
+                            <DialogPanel className='w-full max-w-md rounded-xl bg-white p-6 shadow-xl'>
+                                <DialogTitle className='text-lg font-semibold text-[#25A8D6] mb-4'>
+                                    {isEditMode ? 'Update Category' : 'Add New Category'}
+                                </DialogTitle>
+
+                                <form onSubmit={handleSubmit(onSubmit)} className='space-y-4'>
+                                    <div>
+                                        <label className='text-sm text-gray-700'>Category Name</label>
+                                        <input
+                                            {...register('name')}
+                                            className='input input-bordered w-full'
+                                            required
+                                        />
+                                    </div>
+                                    <div>
+                                        <label className='text-sm text-gray-700'>Upload Image</label>
+                                        <input
+                                            type='file'
+                                            {...register('image')}
+                                            accept='image/*'
+                                            className=' file:bg-[#6BDCF6] file:text-white file:px-4 file:py-2 file:rounded-md file:font-semibold hover:file:bg-[#25A8D6]  w-full max-w-sm'
+                                        />
+                                    </div>
+                                    <div className='text-right'>
+                                        <Button type='submit' label={isEditMode ? 'Update' : 'Add Category'} />
+                                    </div>
+                                </form>
+                            </DialogPanel>
+                        </div>
+                    </Dialog>
+                </Transition>
             </div>
-
-            {isLoading ? (
-                <LoadingSpinner />
-            ) : categories.length === 0 ? (
-                <p className='text-gray-500 font-medium text-center mt-6'>
-                    No Categories found.
-                </p>
-            ) : (
-                <CustomTable data={categories} columns={columns} />
-            )}
-
-
-            {/* Add/Edit Category Modal */}
-            <Transition show={isOpen} as={Fragment}>
-                <Dialog as='div' className='relative z-50' onClose={() => setIsOpen(false)}>
-                    <div className='fixed inset-0 bg-black/30 backdrop-blur-sm' />
-                    <div className='fixed inset-0 flex items-center justify-center p-4'>
-                        <DialogPanel className='w-full max-w-md rounded-xl bg-white p-6 shadow-xl'>
-                            <DialogTitle className='text-lg font-semibold text-[#25A8D6] mb-4'>
-                                {isEditMode ? 'Update Category' : 'Add New Category'}
-                            </DialogTitle>
-
-                            <form onSubmit={handleSubmit(onSubmit)} className='space-y-4'>
-                                <div>
-                                    <label className='text-sm text-gray-700'>Category Name</label>
-                                    <input
-                                        {...register('name')}
-                                        className='input input-bordered w-full'
-                                        required
-                                    />
-                                </div>
-                                <div>
-                                    <label className='text-sm text-gray-700'>Upload Image</label>
-                                    <input
-                                        type='file'
-                                        {...register('image')}
-                                        accept='image/*'
-                                        className=' file:bg-[#6BDCF6] file:text-white file:px-4 file:py-2 file:rounded-md file:font-semibold hover:file:bg-[#25A8D6]  w-full max-w-sm'
-                                    />
-                                </div>
-                                <div className='text-right'>
-                                    <Button type='submit' label={isEditMode ? 'Update' : 'Add Category'} />
-                                </div>
-                            </form>
-                        </DialogPanel>
-                    </div>
-                </Dialog>
-            </Transition>
-        </div>
+        </>
     )
 }
 

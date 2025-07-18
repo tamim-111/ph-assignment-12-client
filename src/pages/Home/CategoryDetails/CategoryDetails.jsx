@@ -9,6 +9,7 @@ import toast from 'react-hot-toast'
 import LoadingSpinner from '../../../components/Spinner/LoadingSpinner'
 import Container from '../../../components/container/Container'
 import useAuth from '../../../hooks/useAuth'
+import { Helmet } from 'react-helmet'
 
 const CategoryDetails = () => {
     const { user } = useAuth()
@@ -77,9 +78,11 @@ const CategoryDetails = () => {
             ),
         },
     ]
+    const medicineName = medicines?.[0]?.category || id
 
     return (
         <Container>
+            <Helmet><title>MedEasy | CategoryDetails | {medicineName}</title></Helmet>
             <section className='my-10 px-4'>
                 <h2 className='text-3xl font-bold text-center mb-6 text-[#25A8D6]'>
                     Medicines in "{id}" Category

@@ -5,6 +5,7 @@ import { toast } from 'react-hot-toast'
 import CustomTable from '../../../../components/CustomTable/CustomTable'
 import Button from '../../../../components/Button/Button'
 import LoadingSpinner from '../../../../components/Spinner/LoadingSpinner'
+import { Helmet } from 'react-helmet'
 
 const PaymentManagement = () => {
     const axiosSecure = useAxiosSecure()
@@ -98,18 +99,21 @@ const PaymentManagement = () => {
     ]
 
     return (
-        <div className='p-4 md:p-6'>
-            <h2 className='text-2xl font-bold text-[#25A8D6] mb-4'>Payment Management</h2>
-            {isLoading ? (
-                <LoadingSpinner />
-            ) : payments.length === 0 ? (
-                <p className='text-gray-500 text-center mt-10'>
-                    No payments found.
-                </p>
-            ) : (
-                <CustomTable data={payments} columns={columns} showPriceSort={true} />
-            )}
-        </div>
+        <>
+            <Helmet><title>MedEasy | DashBoard | PaymentManagement</title></Helmet>
+            <div className='p-4 md:p-6'>
+                <h2 className='text-2xl font-bold text-[#25A8D6] mb-4'>Payment Management</h2>
+                {isLoading ? (
+                    <LoadingSpinner />
+                ) : payments.length === 0 ? (
+                    <p className='text-gray-500 text-center mt-10'>
+                        No payments found.
+                    </p>
+                ) : (
+                    <CustomTable data={payments} columns={columns} showPriceSort={true} />
+                )}
+            </div>
+        </>
     )
 }
 
