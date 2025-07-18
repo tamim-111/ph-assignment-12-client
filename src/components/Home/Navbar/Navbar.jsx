@@ -16,7 +16,6 @@ const Navbar = () => {
             <div className='py-4'>
                 <Container>
                     <div className='flex flex-row items-center justify-between gap-3 md:gap-0'>
-                        {/* Logo + Site Name */}
                         <Link to='/' className='text-xl md:text-2xl font-bold flex items-center gap-1'>
                             <img src={logo} alt='logo' className='w-8 h-8' />
                             <span>MedEasy</span>
@@ -71,52 +70,85 @@ const Navbar = () => {
                             )}
                         </div>
 
-                        {/* Right Side: Profile Dropdown */}
+                        {/* Right Side: Profile Dropdown*/}
                         <div className='relative'>
-                            <div className='flex items-center gap-3'>
-                                {user && (
-                                    <div
-                                        onClick={() => setIsOpen(!isOpen)}
-                                        className='p-2 border-[1px] border-neutral-200 flex items-center gap-2 rounded-full cursor-pointer hover:shadow-md transition'
-                                    >
-                                        <AiOutlineMenu className='text-white' />
-                                        <img
-                                            className='rounded-full'
-                                            referrerPolicy='no-referrer'
-                                            src={user.photoURL || avatarImg}
-                                            alt='profile'
-                                            height='30'
-                                            width='30'
-                                        />
-                                    </div>
-                                )}
+                            <div
+                                onClick={() => setIsOpen(!isOpen)}
+                                className='p-2 border-[1px] border-neutral-200 flex items-center gap-2 rounded-full cursor-pointer hover:shadow-md transition'
+                            >
+                                <AiOutlineMenu className='text-white' />
+                                <img
+                                    className='rounded-full'
+                                    referrerPolicy='no-referrer'
+                                    src={user?.photoURL || avatarImg}
+                                    alt='profile'
+                                    height='30'
+                                    width='30'
+                                />
                             </div>
 
-                            {/* Profile Dropdown Menu */}
-                            {isOpen && user && (
+                            {/* Dropdown Content */}
+                            {isOpen && (
                                 <div className='absolute rounded-xl shadow-md w-[40vw] md:w-[12vw] bg-white overflow-hidden right-0 top-12 text-sm z-50'>
                                     <div className='flex flex-col cursor-pointer text-black'>
-                                        <Link
-                                            to='/update-profile'
-                                            className='px-4 py-3 hover:bg-neutral-100 transition font-semibold'
-                                        >
-                                            Update Profile
-                                        </Link>
-                                        <Link
-                                            to='/dashboard'
-                                            className='px-4 py-3 hover:bg-neutral-100 transition font-semibold'
-                                        >
-                                            Dashboard
-                                        </Link>
-                                        <div
-                                            onClick={() => {
-                                                setIsOpen(false)
-                                                logOut()
-                                            }}
-                                            className='px-4 py-3 hover:bg-neutral-100 transition font-semibold cursor-pointer'
-                                        >
-                                            Logout
+                                        <div className='md:hidden flex flex-col'>
+                                            <Link
+                                                to='/'
+                                                className='px-4 py-3 hover:bg-neutral-100 transition font-semibold'
+                                            >
+                                                Home
+                                            </Link>
+                                            <Link
+                                                to='/shop'
+                                                className='px-4 py-3 hover:bg-neutral-100 transition font-semibold'
+                                            >
+                                                Shop
+                                            </Link>
+                                            <Link
+                                                to='/cart'
+                                                className='px-4 py-3 hover:bg-neutral-100 transition font-semibold'
+                                            >
+                                                Cart
+                                            </Link>
+                                            {!user && <Link
+                                                to='/login'
+                                                className='px-4 py-3 hover:bg-neutral-100 transition font-semibold'
+                                            >
+                                                Join Us
+                                            </Link>}
                                         </div>
+
+                                        {user ? (
+                                            <>
+                                                <Link
+                                                    to='/update-profile'
+                                                    className='px-4 py-3 hover:bg-neutral-100 transition font-semibold'
+                                                >
+                                                    Update Profile
+                                                </Link>
+                                                <Link
+                                                    to='/dashboard'
+                                                    className='px-4 py-3 hover:bg-neutral-100 transition font-semibold'
+                                                >
+                                                    Dashboard
+                                                </Link>
+                                                <div
+                                                    onClick={() => {
+                                                        setIsOpen(false)
+                                                        logOut()
+                                                    }}
+                                                    className='px-4 py-3 hover:bg-neutral-100 transition font-semibold cursor-pointer'
+                                                >
+                                                    Logout
+                                                </div>
+                                            </>
+                                        ) : (
+                                            <p
+                                                className='px-4 py-3 text-xs text-red-400'
+                                            >
+                                                Please Login to see below features
+                                            </p>
+                                        )}
                                     </div>
                                 </div>
                             )}
