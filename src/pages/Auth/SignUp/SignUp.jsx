@@ -9,18 +9,20 @@ import { imageUpload, saveUserInDb } from '../../../api/utils'
 import Button from '../../../components/Button/Button'
 import LoadingSpinner from '../../../components/Spinner/LoadingSpinner'
 import { Helmet } from 'react-helmet'
+import { useState } from 'react'
 
 const SignUp = () => {
-    const { createUser, updateUserProfile, signInWithGoogle, setUser, loading } = useAuth()
+    const { createUser, updateUserProfile, signInWithGoogle, setUser } = useAuth()
+    const [loading, setLoading] = useState(false)
     const navigate = useNavigate()
     const { register, handleSubmit, reset } = useForm()
     const auth = getAuth()
 
-    if (loading) return <LoadingSpinner />
 
     const onSubmit = async data => {
         const image = data.image[0]
         const imageUrl = await imageUpload(image)
+        setLoading(true)
 
         try {
             await createUser(data.email, data.password)
@@ -41,6 +43,8 @@ const SignUp = () => {
         } catch (err) {
             console.log(err)
             toast.error(err?.message)
+        } finally {
+            setLoading(false)
         }
     }
 
@@ -122,8 +126,11 @@ const SignUp = () => {
                                 <option value='seller'>Seller</option>
                             </select>
                         </div>
-
-                        <Button type='submit' wideFull={true} label='Sign Up'></Button>
+                        <Button
+                            type='submit'
+                            wideFull={true}
+                            label={loading ? <TbFidgetSpinner className='animate-spin m-auto' /> : 'Sign Up'}
+                        />
                     </form>
 
                     <div className='flex items-center my-4 space-x-2'>
