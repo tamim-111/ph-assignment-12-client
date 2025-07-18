@@ -1,8 +1,13 @@
 import { createContext, useEffect, useState } from 'react'
 import {
-    GoogleAuthProvider, createUserWithEmailAndPassword, getAuth,
-    onAuthStateChanged, signInWithEmailAndPassword, signInWithPopup,
-    signOut, updateProfile,
+    GoogleAuthProvider,
+    createUserWithEmailAndPassword,
+    getAuth,
+    onAuthStateChanged,
+    signInWithEmailAndPassword,
+    signInWithPopup,
+    signOut,
+    updateProfile,
 } from 'firebase/auth'
 import { app } from '../firebase/firebase.config'
 import axios from 'axios'
@@ -15,26 +20,33 @@ const AuthProvider = ({ children }) => {
     const [user, setUser] = useState(null)
     const [loading, setLoading] = useState(true)
 
+    // Register
     const createUser = (email, password) => {
         setLoading(true)
         return createUserWithEmailAndPassword(auth, email, password)
     }
 
+    // Login
     const signIn = (email, password) => {
         setLoading(true)
         return signInWithEmailAndPassword(auth, email, password)
     }
 
+    // Google Login
     const signInWithGoogle = () => {
         setLoading(true)
         return signInWithPopup(auth, googleProvider)
     }
 
+    // Logout
     const logOut = async () => {
         setLoading(true)
-        return signOut(auth)
+        localStorage.removeItem('access-token')
+        await signOut(auth)
+        setLoading(false)
     }
 
+    // Profile update
     const updateUserProfile = (name, photo) => {
         return updateProfile(auth.currentUser, {
             displayName: name,
@@ -42,39 +54,38 @@ const AuthProvider = ({ children }) => {
         })
     }
 
-    // onAuthStateChange
+    // onAuthStateChanged
     useEffect(() => {
         const unsubscribe = onAuthStateChanged(auth, async currentUser => {
-            console.log('CurrentUser-->', currentUser?.email)
             if (currentUser?.email) {
                 setUser(currentUser)
-
-                // Get JWT token
-                await axios.post(
-                    `${import.meta.env.VITE_API_URL}/jwt`,
-                    {
-                        email: currentUser?.email,
-                    },
-                    { withCredentials: true }
-                )
+                try {
+                    const { data } = await axios.post(
+                        `${import.meta.env.VITE_API_URL}/jwt`,
+                        { email: currentUser.email }
+                    )
+                    localStorage.setItem('access-token', data.token)
+                } catch (err) {
+                    console.error('JWT fetch failed:', err)
+                }
             } else {
-                setUser(currentUser)
-                await axios.get(`${import.meta.env.VITE_API_URL}/logout`, {
-                    withCredentials: true,
-                })
+                setUser(null)
+                localStorage.removeItem('access-token') // Clean up token manually
+                try {
+                    await axios.get(`${import.meta.env.VITE_API_URL}/logout`)
+                } catch (err) {
+                    console.error('Logout cleanup failed:', err)
+                }
             }
             setLoading(false)
         })
-        return () => {
-            return unsubscribe()
-        }
+
+        return () => unsubscribe()
     }, [])
 
     const authInfo = {
         user,
-        setUser,
         loading,
-        setLoading,
         createUser,
         signIn,
         signInWithGoogle,
@@ -83,7 +94,9 @@ const AuthProvider = ({ children }) => {
     }
 
     return (
-        <AuthContext.Provider value={authInfo}>{children}</AuthContext.Provider>
+        <AuthContext.Provider value={authInfo}>
+            {children}
+        </AuthContext.Provider>
     )
 }
 

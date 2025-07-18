@@ -1,34 +1,46 @@
-import axios from 'axios'
-import { useEffect } from 'react'
-import { useNavigate } from 'react-router'
-import useAuth from './useAuth'
+import axios from 'axios';
+import { useEffect } from 'react';
+import { useNavigate } from 'react-router';
+import useAuth from './useAuth';
 
-export const axiosSecure = axios.create({
+// Create only ONCE
+const axiosSecure = axios.create({
     baseURL: import.meta.env.VITE_API_URL,
-    withCredentials: true,
-})
+    withCredentials: true, // enable this if using cookies, else skip
+});
 
 const useAxiosSecure = () => {
-    const navigate = useNavigate()
-    const { logOut } = useAuth()
-    useEffect(() => {
-        axiosSecure.interceptors.response.use(
-            res => {
-                return res
-            },
-            async error => {
-                console.log('Error caught from axios interceptor-->', error.response)
-                if (error.response.status === 401 || error.response.status === 403) {
-                    // logout
-                    logOut()
-                    // navigate to login
-                    navigate('/login')
-                }
-                return Promise.reject(error)
-            }
-        )
-    }, [logOut, navigate])
-    return axiosSecure
-}
+    const navigate = useNavigate();
+    const { logOut } = useAuth();
 
-export default useAxiosSecure
+    useEffect(() => {
+        const requestInterceptor = axiosSecure.interceptors.request.use(config => {
+            const token = localStorage.getItem('access-token');
+            if (token) {
+                config.headers.Authorization = `Bearer ${token}`;
+            }
+            return config;
+        });
+
+        const responseInterceptor = axiosSecure.interceptors.response.use(
+            response => response,
+            async error => {
+                if (error.response && (error.response.status === 401 || error.response.status === 403)) {
+                    await logOut();
+                    navigate('/login');
+                }
+                return Promise.reject(error);
+            }
+        );
+
+        // Eject interceptors on unmount
+        return () => {
+            axiosSecure.interceptors.request.eject(requestInterceptor);
+            axiosSecure.interceptors.response.eject(responseInterceptor);
+        };
+    }, [logOut, navigate]);
+
+    return axiosSecure;
+};
+
+export default useAxiosSecure;
