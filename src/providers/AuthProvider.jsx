@@ -43,6 +43,7 @@ const AuthProvider = ({ children }) => {
         setLoading(true)
         localStorage.removeItem('access-token')
         await signOut(auth)
+        setUser(null)  // Clear user state explicitly
         setLoading(false)
     }
 
@@ -70,12 +71,8 @@ const AuthProvider = ({ children }) => {
                 }
             } else {
                 setUser(null)
-                localStorage.removeItem('access-token') // Clean up token manually
-                try {
-                    await axios.get(`${import.meta.env.VITE_API_URL}/logout`)
-                } catch (err) {
-                    console.error('Logout cleanup failed:', err)
-                }
+                localStorage.removeItem('access-token')
+                // Removed axios.get('/logout') call here because endpoint no longer exists
             }
             setLoading(false)
         })
