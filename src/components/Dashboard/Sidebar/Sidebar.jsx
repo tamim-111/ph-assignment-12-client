@@ -12,7 +12,6 @@ const Sidebar = () => {
     const [isActive, setActive] = useState(false)
     const { role, isLoading } = useRole()
 
-    // Sidebar Responsive Handler
     const handleToggle = () => {
         setActive(!isActive)
     }
@@ -22,7 +21,6 @@ const Sidebar = () => {
             <div className='bg-gradient-to-r from-[#6BDCF6] to-[#25A8D6] text-white flex justify-between md:hidden'>
                 <div>
                     <div className='block cursor-pointer p-4 font-bold'>
-                        {/* Logo + Site Name */}
                         <Link to='/' className='text-xl md:text-2xl font-bold flex items-center gap-1'>
                             <img src={logo} alt='logo' className='w-8 h-8' />
                             <span>MedEasy</span>
@@ -46,7 +44,6 @@ const Sidebar = () => {
                 <div>
                     <div>
                         <div className='w-full hidden md:flex px-4 py-2 shadow-lg rounded-lg justify-center items-center'>
-                            {/* Logo + Site Name */}
                             <Link to='/' className='text-xl md:text-2xl font-bold flex items-center gap-1'>
                                 <img src={logo} alt='logo' className='w-8 h-8' />
                                 <span>MedEasy</span>
@@ -54,7 +51,6 @@ const Sidebar = () => {
                         </div>
                     </div>
 
-                    {/* Nav Items */}
                     <div className='flex flex-col justify-between flex-1 mt-6'>
                         <nav>
                             {isLoading && <LoadingSpinner></LoadingSpinner>}

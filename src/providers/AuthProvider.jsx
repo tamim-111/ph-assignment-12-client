@@ -43,7 +43,7 @@ const AuthProvider = ({ children }) => {
         setLoading(true)
         localStorage.removeItem('access-token')
         await signOut(auth)
-        setUser(null)  // Clear user state explicitly
+        setUser(null)
         setLoading(false)
     }
 
@@ -72,7 +72,6 @@ const AuthProvider = ({ children }) => {
             } else {
                 setUser(null)
                 localStorage.removeItem('access-token')
-                // Removed axios.get('/logout') call here because endpoint no longer exists
             }
             setLoading(false)
         })

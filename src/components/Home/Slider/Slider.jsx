@@ -12,7 +12,6 @@ import LoadingSpinner from '../../Spinner/LoadingSpinner'
 const Slider = () => {
     const axiosSecure = useAxiosSecure()
 
-    // ✅ Fetch advertised medicines
     const { data: slides = [], isLoading } = useQuery({
         queryKey: ['advertised-medicines'],
         queryFn: async () => {

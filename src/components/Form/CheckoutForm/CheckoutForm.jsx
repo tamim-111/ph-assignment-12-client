@@ -19,7 +19,7 @@ const CheckoutForm = ({ totalPrice, orderData }) => {
     const [processing, setProcessing] = useState(false)
     const [clientSecret, setClientSecret] = useState('')
 
-    // ✅ Create payment intent
+    // for payment intent
     useEffect(() => {
         const getClientSecret = async () => {
             try {

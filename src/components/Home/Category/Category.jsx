@@ -48,7 +48,7 @@ const Category = () => {
                     {categoryWithCounts.map((cat) => (
                         <CategoryCard
                             key={cat._id}
-                            id={cat.name} // route param is category name, used in `/categoryDetails/:id`
+                            id={cat.name}
                             name={cat.name}
                             image={cat.image}
                             count={cat.count}

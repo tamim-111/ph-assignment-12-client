@@ -3,10 +3,9 @@ import { useEffect } from 'react';
 import { useNavigate } from 'react-router';
 import useAuth from './useAuth';
 
-// Create only ONCE
 const axiosSecure = axios.create({
     baseURL: import.meta.env.VITE_API_URL,
-    withCredentials: true, // enable this if using cookies, else skip
+    withCredentials: true,
 });
 
 const useAxiosSecure = () => {
@@ -33,7 +32,6 @@ const useAxiosSecure = () => {
             }
         );
 
-        // Eject interceptors on unmount
         return () => {
             axiosSecure.interceptors.request.eject(requestInterceptor);
             axiosSecure.interceptors.response.eject(responseInterceptor);

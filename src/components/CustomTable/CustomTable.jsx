@@ -1,11 +1,8 @@
 import React, { useState, useEffect } from 'react'
+import { AiOutlineArrowUp, AiOutlineArrowDown } from 'react-icons/ai'
 import {
-    useReactTable,
-    getCoreRowModel,
-    getPaginationRowModel,
-    getSortedRowModel,
-    getFilteredRowModel,
-    flexRender,
+    useReactTable, getCoreRowModel, getPaginationRowModel,
+    getSortedRowModel, getFilteredRowModel, flexRender,
 } from '@tanstack/react-table'
 
 const CustomTable = ({ columns, data, showPriceSort = false }) => {
@@ -45,7 +42,7 @@ const CustomTable = ({ columns, data, showPriceSort = false }) => {
 
     return (
         <div className='space-y-4'>
-            {/* 🔍 Search and 🔽 Price Sort */}
+            {/* input fields */}
             <div className='flex justify-between items-center'>
                 <input
                     type='text'
@@ -68,7 +65,7 @@ const CustomTable = ({ columns, data, showPriceSort = false }) => {
                 )}
             </div>
 
-            {/* 📋 Table */}
+            {/* Table */}
             <div className='overflow-x-auto'>
                 <table className='table w-full bg-white rounded-xl shadow'>
                     <thead className='bg-gradient-to-r from-[#6BDCF6] to-[#25A8D6] text-white'>
@@ -81,8 +78,8 @@ const CustomTable = ({ columns, data, showPriceSort = false }) => {
                                         onClick={header.column.getToggleSortingHandler()}
                                     >
                                         {flexRender(header.column.columnDef.header, header.getContext())}
-                                        {header.column.getIsSorted() === 'asc' && ' 🔼'}
-                                        {header.column.getIsSorted() === 'desc' && ' 🔽'}
+                                        {header.column.getIsSorted() === 'asc' && <AiOutlineArrowUp className="inline mb-1" />}
+                                        {header.column.getIsSorted() === 'desc' && <AiOutlineArrowDown className="inline mb-1" />}
                                     </th>
                                 ))}
                             </tr>
@@ -102,7 +99,7 @@ const CustomTable = ({ columns, data, showPriceSort = false }) => {
                 </table>
             </div>
 
-            {/* 📄 Pagination Controls */}
+            {/* Pagination Controls */}
             <div className='flex items-center justify-between'>
                 {/* Navigation */}
                 <div className='space-x-2'>
