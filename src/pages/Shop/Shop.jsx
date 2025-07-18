@@ -4,7 +4,7 @@ import { FaEye, FaPlus } from 'react-icons/fa'
 import Container from '../../components/container/Container'
 import CustomTable from '../../components/CustomTable/CustomTable'
 import { useQuery } from '@tanstack/react-query'
-import useAxiosSecure from '../../hooks/useAxiosSecure' // assumes you created this
+import useAxiosSecure from '../../hooks/useAxiosSecure'
 import toast from 'react-hot-toast'
 import LoadingSpinner from '../../components/Spinner/LoadingSpinner'
 import useAuth from '../../hooks/useAuth'
@@ -44,7 +44,7 @@ const Shop = () => {
             const res = await axiosSecure.post('/carts', cartItem)
             if (res.data.insertedId) {
                 toast.success(`${medicine.name} added to cart`)
-                setAddedToCartIds(prev => [...prev, medicine._id]) // <- add to disabled list
+                setAddedToCartIds(prev => [...prev, medicine._id])
             }
         } catch (err) {
             toast.error('Failed to add to cart')

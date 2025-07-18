@@ -43,20 +43,20 @@ const CustomTable = ({ columns, data, showPriceSort = false }) => {
     return (
         <div className='space-y-4'>
             {/* input fields */}
-            <div className='flex justify-between items-center'>
+            <div className='flex flex-col sm:flex-row sm:justify-between sm:items-center gap-2'>
                 <input
                     type='text'
                     placeholder='Search medicine, generic, company...'
                     value={globalFilter ?? ''}
                     onChange={e => setGlobalFilter(e.target.value)}
-                    className='input input-bordered w-full max-w-sm'
+                    className='input input-bordered w-full sm:max-w-sm'
                 />
 
                 {showPriceSort && (
                     <select
                         value={priceSort}
                         onChange={e => setPriceSort(e.target.value)}
-                        className='select select-sm w-48'
+                        className='select select-sm w-full sm:w-48'
                     >
                         <option value='default'>Sort by Price</option>
                         <option value='asc'>Price: Low to High</option>
@@ -67,19 +67,19 @@ const CustomTable = ({ columns, data, showPriceSort = false }) => {
 
             {/* Table */}
             <div className='overflow-x-auto'>
-                <table className='table w-full bg-white rounded-xl shadow'>
+                <table className='table w-full bg-white rounded-xl shadow text-sm'>
                     <thead className='bg-gradient-to-r from-[#6BDCF6] to-[#25A8D6] text-white'>
                         {table.getHeaderGroups().map(headerGroup => (
                             <tr key={headerGroup.id}>
                                 {headerGroup.headers.map(header => (
                                     <th
                                         key={header.id}
-                                        className='text-sm py-3 px-4 text-left cursor-pointer select-none'
+                                        className='py-3 px-4 text-left cursor-pointer select-none'
                                         onClick={header.column.getToggleSortingHandler()}
                                     >
                                         {flexRender(header.column.columnDef.header, header.getContext())}
-                                        {header.column.getIsSorted() === 'asc' && <AiOutlineArrowUp className="inline mb-1" />}
-                                        {header.column.getIsSorted() === 'desc' && <AiOutlineArrowDown className="inline mb-1" />}
+                                        {header.column.getIsSorted() === 'asc' && <AiOutlineArrowUp className="inline mb-1 ml-1" />}
+                                        {header.column.getIsSorted() === 'desc' && <AiOutlineArrowDown className="inline mb-1 ml-1" />}
                                     </th>
                                 ))}
                             </tr>
@@ -89,7 +89,7 @@ const CustomTable = ({ columns, data, showPriceSort = false }) => {
                         {table.getRowModel().rows.map(row => (
                             <tr key={row.id} className='hover:bg-blue-50 transition'>
                                 {row.getVisibleCells().map(cell => (
-                                    <td key={cell.id} className='py-3 px-4 text-sm'>
+                                    <td key={cell.id} className='py-3 px-4'>
                                         {flexRender(cell.column.columnDef.cell, cell.getContext())}
                                     </td>
                                 ))}
@@ -100,9 +100,9 @@ const CustomTable = ({ columns, data, showPriceSort = false }) => {
             </div>
 
             {/* Pagination Controls */}
-            <div className='flex items-center justify-between'>
+            <div className='flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2'>
                 {/* Navigation */}
-                <div className='space-x-2'>
+                <div className='flex flex-wrap gap-2'>
                     <button className='btn btn-sm' onClick={() => table.setPageIndex(0)} disabled={!table.getCanPreviousPage()}>
                         {'<<'}
                     </button>
@@ -118,13 +118,13 @@ const CustomTable = ({ columns, data, showPriceSort = false }) => {
                 </div>
 
                 {/* Page Indicator */}
-                <span>
+                <span className='text-center sm:text-left'>
                     Page <strong>{table.getState().pagination.pageIndex + 1}</strong> of {table.getPageCount()}
                 </span>
 
                 {/* Page Size Selector */}
                 <select
-                    className='select select-sm'
+                    className='select select-sm w-full sm:w-auto'
                     value={table.getState().pagination.pageSize}
                     onChange={e => table.setPageSize(Number(e.target.value))}
                 >
