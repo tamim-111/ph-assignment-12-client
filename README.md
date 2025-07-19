@@ -1,9 +1,20 @@
+# Note: Programming Hero Private Repository Access Issue
+Despite multiple attempts, I was unable to connect to the Programming Hero private repository. I discussed this issue with an instructor and shared all the details. Based on their suggestion, I have completed the assignment in a repository created under my own GitHub account.
+
+Please watch to the video below for a visual explanation of the problem I faced:
+
+
+https://github.com/user-attachments/assets/8cce3420-4f75-47ed-8115-e0e170b1fcea
+
+---
+---
+
 # MedEasy
 ---
 
 ## Website Overview
 
-<img alt="image" src="../client/src/assets/images/website-screen-shot.png" />
+<img width="1599" height="779" alt="website-screen-shot" src="https://github.com/user-attachments/assets/2ba4e526-0c83-4233-9040-efb1bbce10f3" />
 
 MedEasy is a full-stack pharmacy e-commerce platform designed for customers, sellers, and admins. It provides smooth product browsing, secure authentication, cart and checkout functionality with Stripe payment integration, and comprehensive dashboards for admin and sellers to manage products, users, payments, and advertisements.
 
