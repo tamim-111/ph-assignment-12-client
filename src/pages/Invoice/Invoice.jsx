@@ -141,49 +141,53 @@ const Invoice = () => {
         <>
             <Helmet><title>MedEasy | Invoice</title></Helmet>
             <div className="min-h-screen bg-gray-100 flex items-center justify-center py-10 px-4">
-                <div className="bg-white p-8 rounded-lg shadow max-w-3xl w-full">
-                    <div className="flex justify-between items-center mb-6">
+                <div className="bg-white p-4 md:p-8 rounded-lg shadow w-full max-w-3xl">
+                    {/* Header */}
+                    <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 gap-4">
                         <div className="flex items-center gap-2">
                             <img src="/logo.png" alt="MedEasy" className="w-10 h-10" />
                             <h2 className="text-xl font-bold text-[#25A8D6]">MedEasy</h2>
                         </div>
-                        <div className="text-sm text-gray-500 text-right">
+                        <div className="text-sm text-gray-500 text-left md:text-right">
                             <p><strong>Invoice ID:</strong> {payment._id}</p>
                             <p><strong>Transaction ID:</strong> {payment.transactionId}</p>
                         </div>
                     </div>
 
-                    <div className="mb-6">
+                    {/* User Info */}
+                    <div className="mb-6 text-sm md:text-base space-y-1">
                         <p><span className="font-medium">Customer:</span> {payment.userName}</p>
                         <p><span className="font-medium">Email:</span> {payment.userEmail}</p>
                         <p><span className="font-medium">Date & Time:</span> {new Date(payment.date).toLocaleString()}</p>
                     </div>
 
-                    <table className="w-full table-auto border">
-                        <thead className="bg-gradient-to-r from-[#6BDCF6] to-[#25A8D6] text-white">
-                            <tr>
-                                <th className="py-2 px-4 text-left">Medicine</th>
-                                <th className="py-2 px-4 text-left">Company</th>
-                                <th className="py-2 px-4 text-left">Qty</th>
-                                <th className="py-2 px-4 text-left">Total</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {payment.items.map((item, index) => (
-                                <tr key={index} className="border-t">
-                                    <td className="py-2 px-4">{item.name}</td>
-                                    <td className="py-2 px-4">{item.company}</td>
-                                    <td className="py-2 px-4">{item.quantity}</td>
-                                    <td className="py-2 px-4">{item.subtotal}</td>
+                    {/* Table */}
+                    <div className="overflow-x-auto">
+                        <table className="min-w-full table-auto border text-sm">
+                            <thead className="bg-gradient-to-r from-[#6BDCF6] to-[#25A8D6] text-white">
+                                <tr>
+                                    <th className="py-2 px-4 text-left">Medicine</th>
+                                    <th className="py-2 px-4 text-left">Company</th>
+                                    <th className="py-2 px-4 text-left">Qty</th>
+                                    <th className="py-2 px-4 text-left">Total</th>
                                 </tr>
-                            ))}
-                        </tbody>
-                    </table>
+                            </thead>
+                            <tbody>
+                                {payment.items.map((item, index) => (
+                                    <tr key={index} className="border-t">
+                                        <td className="py-2 px-4">{item.name}</td>
+                                        <td className="py-2 px-4">{item.company}</td>
+                                        <td className="py-2 px-4">{item.quantity}</td>
+                                        <td className="py-2 px-4">{item.subtotal}</td>
+                                    </tr>
+                                ))}
+                            </tbody>
+                        </table>
+                    </div>
 
-                    <div className="mt-6 text-right">
-                        <p className="text-lg font-semibold">
-                            Grand Total: <span className="text-[#25A8D6]">{payment.amount}</span>
-                        </p>
+                    {/* Total & PDF Download */}
+                    <div className="mt-6 text-right text-base md:text-lg font-semibold">
+                        Grand Total: <span className="text-[#25A8D6]">{payment.amount}</span>
                     </div>
 
                     <div className="mt-6">
