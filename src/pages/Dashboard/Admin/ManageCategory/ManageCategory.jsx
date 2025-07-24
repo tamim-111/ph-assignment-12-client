@@ -131,7 +131,7 @@ const ManageCategory = () => {
         <>
             <Helmet><title>MedEasy | DashBoard | ManageCategory</title></Helmet>
             <div className='p-4 md:p-6'>
-                <div className='flex justify-between items-center mb-4'>
+                <div className='text-center md:flex md:justify-between md:items-center mb-4'>
                     <h2 className='text-2xl font-bold text-[#25A8D6]'>Manage Categories</h2>
                     <Button
                         label={
