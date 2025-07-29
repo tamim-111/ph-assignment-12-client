@@ -63,12 +63,12 @@ const ManageUsers = () => {
                 }
 
                 return (
-                    <div className='flex flex-wrap gap-2'>
+                    <div className="flex flex-col sm:flex-row flex-wrap gap-2 max-w-xs">
                         {row.role !== 'seller' && (
                             <Button
                                 label={
-                                    <span className='flex items-center gap-1 text-sm'>
-                                        <FaStore /> Make Seller
+                                    <span className='flex items-center gap-1 text-sm whitespace-nowrap'>
+                                        <FaStore /> Seller
                                     </span>
                                 }
                                 onClick={() => handleRoleChange(row._id, 'seller')}
@@ -78,8 +78,8 @@ const ManageUsers = () => {
                         {row.role !== 'customer' && (
                             <Button
                                 label={
-                                    <span className='flex items-center gap-1 text-sm'>
-                                        <FaUser /> Make Customer
+                                    <span className='flex items-center gap-1 text-sm whitespace-nowrap'>
+                                        <FaUser /> Customer
                                     </span>
                                 }
                                 onClick={() => handleRoleChange(row._id, 'customer')}
@@ -88,8 +88,8 @@ const ManageUsers = () => {
                         )}
                         <Button
                             label={
-                                <span className='flex items-center gap-1 text-sm'>
-                                    <FaUserShield /> Make Admin
+                                <span className='flex items-center gap-1 text-sm whitespace-nowrap'>
+                                    <FaUserShield /> Admin
                                 </span>
                             }
                             onClick={() => handleRoleChange(row._id, 'admin')}
