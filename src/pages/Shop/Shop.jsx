@@ -97,17 +97,17 @@ const Shop = () => {
 
                 {/* Modal */}
                 <Dialog open={isModalOpen} onClose={() => setIsModalOpen(false)} className='relative z-50'>
-                    <div className='fixed inset-0 bg-black/30 backdrop-blur-sm flex items-center justify-center p-4'>
-                        <DialogPanel className='w-full max-w-xl rounded-xl bg-white p-6 shadow-lg'>
+                    <div className='fixed inset-0 bg-black/30 backdrop-blur-sm flex items-center justify-center p-4 overflow-y-auto'>
+                        <DialogPanel className='w-full max-w-xl rounded-xl bg-white p-4 sm:p-6 shadow-lg max-h-[90vh] overflow-y-auto'>
                             {selectedMedicine && (
                                 <>
-                                    <DialogTitle className='text-2xl font-semibold text-[#25A8D6] mb-4'>
+                                    <DialogTitle className='text-xl sm:text-2xl font-semibold text-[#25A8D6] mb-4'>
                                         {selectedMedicine.name}
                                     </DialogTitle>
                                     <img
                                         src={selectedMedicine.image}
                                         alt={selectedMedicine.name}
-                                        className='w-full h-60 object-fill rounded-md mb-4'
+                                        className='w-full h-52 sm:h-60 object-fill rounded-md mb-4'
                                     />
                                     <p><strong>Type:</strong> {selectedMedicine.category}</p>
                                     <p><strong>Manufacturer:</strong> {selectedMedicine.company}</p>
@@ -127,6 +127,7 @@ const Shop = () => {
                         </DialogPanel>
                     </div>
                 </Dialog>
+
             </section>
         </Container>
     )
