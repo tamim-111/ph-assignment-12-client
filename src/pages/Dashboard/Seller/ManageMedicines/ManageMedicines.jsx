@@ -117,80 +117,83 @@ const ManageMedicines = () => {
                 <Transition show={isOpen} as={Fragment}>
                     <Dialog as='div' className='relative z-50' onClose={() => setIsOpen(false)}>
                         <div className='fixed inset-0 bg-black/30 backdrop-blur-sm' />
-                        <div className='fixed inset-0 flex items-center justify-center p-4'>
-                            <DialogPanel className='w-full max-w-xl rounded-xl bg-white p-6 shadow-xl'>
-                                <DialogTitle className='text-lg font-semibold text-[#25A8D6] mb-4'>Add New Medicine</DialogTitle>
-                                <form onSubmit={handleSubmit(onSubmit)} className='space-y-4'>
-                                    <div className='grid grid-cols-1 md:grid-cols-2 gap-4'>
-                                        <div>
-                                            <label className='text-sm'>Item Name</label>
-                                            <input {...register('name')} className='input input-bordered w-full' required />
+                        <div className='fixed inset-0 overflow-y-auto p-2 sm:p-4 flex items-center justify-center'>
+                            <div className='w-full max-w-xl mx-auto'>
+                                <DialogPanel className='w-full bg-white p-6 rounded-xl shadow-xl max-h-screen overflow-y-auto'>
+                                    <DialogTitle className='text-lg font-semibold text-[#25A8D6] mb-4'>Add New Medicine</DialogTitle>
+                                    <form onSubmit={handleSubmit(onSubmit)} className='space-y-4'>
+                                        <div className='grid grid-cols-1 md:grid-cols-2 gap-4'>
+                                            <div>
+                                                <label className='text-sm'>Item Name</label>
+                                                <input {...register('name')} className='input input-bordered w-full' required />
+                                            </div>
+                                            <div>
+                                                <label className='text-sm'>Generic Name</label>
+                                                <input {...register('generic')} className='input input-bordered w-full' required />
+                                            </div>
+                                            <div>
+                                                <label className='text-sm'>Short Description</label>
+                                                <input {...register('description')} className='input input-bordered w-full' required />
+                                            </div>
+                                            <div>
+                                                <label className='text-sm'>Image</label>
+                                                <input type='file' {...register('image')} required accept='image/*' className='border-gray-300 rounded-md border w-full file:bg-[#6BDCF6] file:text-white file:px-4 file:py-2 file:rounded-md file:font-semibold hover:file:bg-[#25A8D6]' />
+                                            </div>
+                                            <div>
+                                                <label className='text-sm'>Category</label>
+                                                <select {...register('category')} className='select select-bordered w-full' required>
+                                                    <option value=''>Select a category</option>
+                                                    {isCategoryLoading ? (
+                                                        <option disabled>Loading...</option>
+                                                    ) : (
+                                                        categories.map(cat => (
+                                                            <option key={cat._id} value={cat.name}>
+                                                                {cat.name}
+                                                            </option>
+                                                        ))
+                                                    )}
+                                                </select>
+                                            </div>
+                                            <div>
+                                                <label className='text-sm'>Company</label>
+                                                <select {...register('company')} className='select select-bordered w-full'>
+                                                    <option value='Square'>Square</option>
+                                                    <option value='Incepta'>Incepta</option>
+                                                    <option value='Beximco'>Beximco</option>
+                                                    <option value='ACME'>ACME</option>
+                                                </select>
+                                            </div>
+                                            <div>
+                                                <label className='text-sm'>Mass Unit</label>
+                                                <select {...register('unit')} className='select select-bordered w-full'>
+                                                    <option value='Mg'>Mg</option>
+                                                    <option value='ML'>ML</option>
+                                                </select>
+                                            </div>
+                                            <div>
+                                                <label className='text-sm'>Per Unit Price</label>
+                                                <input type='number' {...register('price')} className='input input-bordered w-full' required />
+                                            </div>
+                                            <div>
+                                                <label className='text-sm'>Discount (%)</label>
+                                                <input type='number' defaultValue={0} {...register('discount')} className='input input-bordered w-full' />
+                                            </div>
+                                            <div>
+                                                <label className='text-sm'>Stock Quantity</label>
+                                                <input
+                                                    type='number'
+                                                    {...register('stock', { required: true })}
+                                                    className='input input-bordered w-full'
+                                                />
+                                            </div>
                                         </div>
-                                        <div>
-                                            <label className='text-sm'>Generic Name</label>
-                                            <input {...register('generic')} className='input input-bordered w-full' required />
+                                        <div className='flex justify-end gap-3'>
+                                            <Button type='button' label='Cancel' onClick={() => setIsOpen(false)} variant='outline' />
+                                            <Button type='submit' label='Add Medicine' />
                                         </div>
-                                        <div>
-                                            <label className='text-sm'>Short Description</label>
-                                            <input {...register('description')} className='input input-bordered w-full' required />
-                                        </div>
-                                        <div>
-                                            <label className='text-sm'>Image</label>
-                                            <input type='file' {...register('image')} required accept='image/*' className='border-gray-300 rounded-md border w-full file:bg-[#6BDCF6] file:text-white file:px-4 file:py-2 file:rounded-md file:font-semibold hover:file:bg-[#25A8D6]' />
-                                        </div>
-                                        <div>
-                                            <label className='text-sm'>Category</label>
-                                            <select {...register('category')} className='select select-bordered w-full' required>
-                                                <option value=''>Select a category</option>
-                                                {isCategoryLoading ? (
-                                                    <option disabled>Loading...</option>
-                                                ) : (
-                                                    categories.map(cat => (
-                                                        <option key={cat._id} value={cat.name}>
-                                                            {cat.name}
-                                                        </option>
-                                                    ))
-                                                )}
-                                            </select>
-                                        </div>
-                                        <div>
-                                            <label className='text-sm'>Company</label>
-                                            <select {...register('company')} className='select select-bordered w-full'>
-                                                <option value='Square'>Square</option>
-                                                <option value='Incepta'>Incepta</option>
-                                                <option value='Beximco'>Beximco</option>
-                                                <option value='ACME'>ACME</option>
-                                            </select>
-                                        </div>
-                                        <div>
-                                            <label className='text-sm'>Mass Unit</label>
-                                            <select {...register('unit')} className='select select-bordered w-full'>
-                                                <option value='Mg'>Mg</option>
-                                                <option value='ML'>ML</option>
-                                            </select>
-                                        </div>
-                                        <div>
-                                            <label className='text-sm'>Per Unit Price</label>
-                                            <input type='number' {...register('price')} className='input input-bordered w-full' required />
-                                        </div>
-                                        <div>
-                                            <label className='text-sm'>Discount (%)</label>
-                                            <input type='number' defaultValue={0} {...register('discount')} className='input input-bordered w-full' />
-                                        </div>
-                                        <div>
-                                            <label className='text-sm'>Stock Quantity</label>
-                                            <input
-                                                type='number'
-                                                {...register('stock', { required: true })}
-                                                className='input input-bordered w-full'
-                                            />
-                                        </div>
-                                    </div>
-                                    <div className='text-right'>
-                                        <Button type='submit' label='Add Medicine' />
-                                    </div>
-                                </form>
-                            </DialogPanel>
+                                    </form>
+                                </DialogPanel>
+                            </div>
                         </div>
                     </Dialog>
                 </Transition>
