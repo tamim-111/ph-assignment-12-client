@@ -98,8 +98,8 @@ const CategoryDetails = () => {
 
                 {/* Modal */}
                 <Dialog open={isModalOpen} onClose={() => setIsModalOpen(false)} className='relative z-50'>
-                    <div className='fixed inset-0 bg-black/30 backdrop-blur-sm flex items-center justify-center p-4'>
-                        <DialogPanel className='w-full max-w-xl rounded-xl bg-white p-6 shadow-lg'>
+                    <div className='fixed inset-0 bg-black/30 backdrop-blur-sm flex items-center justify-center p-4 overflow-y-auto'>
+                        <DialogPanel className='w-full max-w-xl rounded-xl bg-white p-6 shadow-lg max-h-[90vh] overflow-y-auto'>
                             {selectedMedicine && (
                                 <>
                                     <DialogTitle className='text-2xl font-semibold text-[#25A8D6] mb-4'>
